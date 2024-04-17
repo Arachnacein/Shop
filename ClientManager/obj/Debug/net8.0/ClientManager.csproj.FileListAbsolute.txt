@@ -137,3 +137,4 @@ C:\Users\user\source\repos\Shop\ClientManager\obj\Debug\net8.0\refint\ClientMana
 C:\Users\user\source\repos\Shop\ClientManager\obj\Debug\net8.0\ClientManager.pdb
 C:\Users\user\source\repos\Shop\ClientManager\obj\Debug\net8.0\ClientManager.genruntimeconfig.cache
 C:\Users\user\source\repos\Shop\ClientManager\obj\Debug\net8.0\ref\ClientManager.dll
+C:\Users\user\source\repos\Shop\ClientManager\obj\Debug\net8.0\ClientManager.sourcelink.json
