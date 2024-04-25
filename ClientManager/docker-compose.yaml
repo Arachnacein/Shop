@@ -1,0 +1,9 @@
+version: '1.0'
+
+services:
+  clientmanager:
+    image: jluka26/clientmanager:latest
+    ports:
+      - 8080:5000
+    build:
+      context: ../
