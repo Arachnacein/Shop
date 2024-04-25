@@ -6,7 +6,7 @@ namespace ClientManager.Services
     {
         IEnumerable<ClientDto> GetAllClients();
         ClientDto GetClient(Guid id);
-        ClientDto AddNewClient(ClientDto client);
+        ClientDto AddNewClient(CreateClientDto client);
         void UpdateClient(ClientDto client);
         int CountClients();
         void DeleteClient(ClientDto client);

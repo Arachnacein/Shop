@@ -1,3 +1,4 @@
+using ClientManager.Dtos;
 using ClientManager.Exceptions;
 using ClientManager.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,7 @@ namespace ClientManager.Controllers
         public IActionResult Get()
         {
             try{
+                System.Console.WriteLine("-------- Getting --------");
                     var clients = _clientService.GetAllClients();
                     return Ok(clients);
             }
@@ -30,6 +32,38 @@ namespace ClientManager.Controllers
             catch(Exception e)
             {
                 return Conflict(e);
+            }
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetById(Guid id)
+        {
+            try{
+                System.Console.WriteLine("-------- Getting by id --------");
+                    var client = _clientService.GetClient(id);
+                    return Ok(client);
+            }
+            catch(ClientNotFoundException e)
+            {
+                return NotFound(e);
+            }
+            catch(Exception e)
+            {
+                return Conflict(e);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Create(CreateClientDto newClient)
+        {
+            try{
+                System.Console.WriteLine("-------- Creting --------");
+                var client = _clientService.AddNewClient(newClient);
+                return Created($"api/clients/{client.Id}", client);
+            }
+            catch(Exception e)
+            {
+                return Conflict(e.Message);
             }
         }
 
