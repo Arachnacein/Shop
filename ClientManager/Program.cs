@@ -1,3 +1,4 @@
+using AutoMapper;
 using ClientManager.Data;
 using ClientManager.Data.Repositories;
 using ClientManager.Infrastructure.Repositories;
@@ -18,7 +19,8 @@ builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IClientService, ClientService>();
 
 
-// my mappers
+// mappers
+
 builder.Services.AddScoped<IClientMapper, ClientMapper>();
 //############
 
@@ -28,7 +30,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 
 var app = builder.Build();

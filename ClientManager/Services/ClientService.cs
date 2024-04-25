@@ -1,7 +1,9 @@
+using AutoMapper;
 using ClientManager.Data.Repositories;
 using ClientManager.Dtos;
 using ClientManager.Exceptions;
 using ClientManager.Mappers;
+using ClientManager.Models;
 using Microsoft.IdentityModel.Tokens;
 
 namespace ClientManager.Services
@@ -10,11 +12,13 @@ namespace ClientManager.Services
     {
         private readonly IClientRepository _clientRepository;
         private readonly IClientMapper _clientMapper;
+        private readonly IMapper _mapper;
 
-        public ClientService(IClientRepository clientRepository, IClientMapper ClientMapper)
+        public ClientService(IClientRepository clientRepository, IClientMapper ClientMapper, IMapper mapper)
         {
             _clientRepository = clientRepository;
             _clientMapper = ClientMapper;
+            _mapper = mapper;
         }
 
         public ClientDto GetClient(Guid id)
@@ -31,9 +35,9 @@ namespace ClientManager.Services
                 throw new ArgumentNullException($"Not found any clients!");
             return _clientMapper.MapElements(clients.ToList());
         }
-        public ClientDto AddNewClient(ClientDto client)
+        public ClientDto AddNewClient(CreateClientDto client)
         {
-            var mappedClient = _clientMapper.Map(client);
+            var mappedClient = _mapper.Map<Client>(client);
             _clientRepository.AddClient(mappedClient);
             return _clientMapper.Map(mappedClient);
         }
