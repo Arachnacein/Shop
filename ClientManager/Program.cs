@@ -12,8 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddDbContext<ClientDbContext>(options => 
-    options.UseInMemoryDatabase("InMem"));
+// builder.Services.AddDbContext<ClientDbContext>(options => 
+//     options.UseInMemoryDatabase("InMem"));
 
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IClientService, ClientService>();
@@ -22,7 +22,13 @@ builder.Services.AddScoped<IClientService, ClientService>();
 // mappers
 
 builder.Services.AddScoped<IClientMapper, ClientMapper>();
-//############
+
+//############db
+var db_host = Environment.GetEnvironmentVariable("db_host");
+var db_name = Environment.GetEnvironmentVariable("db_name");
+var db_password = Environment.GetEnvironmentVariable("db_password");
+var connString = $"Data Source={db_host};Initial Catalog={db_name};User ID=sa;Password={db_password}";
+builder.Services.AddDbContext<ClientDbContext>(options => options.UseSqlServer(connString));
 
 
 
@@ -42,7 +48,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-InitDb.InitData(app);
+//InitDb.InitData(app);
 
 app.UseHttpsRedirection();
 

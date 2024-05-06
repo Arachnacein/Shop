@@ -1,9 +1,31 @@
 version: '1.0'
 
+networks:
+    clientnetwork:
+
 services:
+  sqldata:
+      image: mcr.microsoft.com/mssql/server:2019-latest
+      environment:
+        - SA_PASSWORD=passwd!@345
+        - ACCEPT_EULA=Y
+      ports:
+        - 1433:1433
+      networks:
+      - clientnetwork
   clientmanager:
     image: jluka26/clientmanager:latest
     ports:
-      - 8080:5000
+      - 8080:8080
     build:
-      context: ../
+      context: /
+    depends_on:
+      - sqldata
+    environment:
+      - db_host=sqldata
+      - db_name=ClientDB
+      - db_password=passwd!@345
+    networks:
+      - clientnetwork
+
+      
