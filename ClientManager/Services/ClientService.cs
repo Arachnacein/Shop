@@ -41,19 +41,21 @@ namespace ClientManager.Services
             _clientRepository.AddClient(mappedClient);
             return _clientMapper.Map(mappedClient);
         }
-        public void UpdateClient(ClientDto client)
+        public void UpdateClient(UpdateClientDto client)
         {
             var existingClient = _clientRepository.GetClient(client.Id);
             if(existingClient == null)
                 throw new ClientNotFoundException($"Client not found. Id:{client.Id}");
-            _clientRepository.UpdateClient(_clientMapper.Map(client));
+            
+            var result = _mapper.Map<Client>(client);
+            _clientRepository.UpdateClient(result);
         }
-        public void DeleteClient(ClientDto client)
+        public void DeleteClient(Guid id)
         {
-            var existingClient = _clientRepository.GetClient(client.Id);
+            var existingClient = _clientRepository.GetClient(id);
             if(existingClient == null)
-                throw new ClientNotFoundException($"Client not found. Id:{client.Id}");
-            _clientRepository.DeleteClient(client.Id);
+                throw new ClientNotFoundException($"Client not found. Id:{id}");
+            _clientRepository.DeleteClient(id);
         }
         public int CountClients() => _clientRepository.GetClients().Count();
         

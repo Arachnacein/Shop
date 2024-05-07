@@ -44,6 +44,13 @@ namespace ClientManager.Infrastructure.Repositories
             return client;
         }
 
+        public void UpdateClient(Client client)
+        {
+            var currentCLient = _context.Clients.FirstOrDefault(x => x.Id == client.Id);
+            client.RegistryDate = currentCLient.RegistryDate;
+            _context.Clients.Update(client);
+            _context.SaveChanges();
+        }
         public void DeleteClient(Guid id)
         {
             var client = _context.Clients.Single(x => x.Id == id);
@@ -51,10 +58,5 @@ namespace ClientManager.Infrastructure.Repositories
             _context.SaveChanges(); 
         }
 
-        public void UpdateClient(Client client)
-        {
-            _context.Clients.Update(client);
-            _context.SaveChanges();
-        }
     }
 }

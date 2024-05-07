@@ -29,7 +29,12 @@ var db_name = Environment.GetEnvironmentVariable("db_name");
 var db_password = Environment.GetEnvironmentVariable("db_password");
 var connString = $"Data Source={db_host};Initial Catalog={db_name};Persist Security Info=True;User ID=sa;Password={db_password};TrustServerCertificate=True;";
 //var connString = $"Data Source={db_host};Initial Catalog={db_name};User ID=sa;Password={db_password};TrustServerCertificate=True;";
-builder.Services.AddDbContext<ClientDbContext>(options => options.UseSqlServer(connString));
+
+builder.Services.AddDbContext<ClientDbContext>(options => 
+{
+    options.UseSqlServer(connString);
+    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+});
 
 
 
