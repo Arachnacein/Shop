@@ -9,6 +9,7 @@ namespace ClientManager
         public MappingProfiles()
         {
             CreateMap<CreateClientDto, Client>();
+            CreateMap<UpdateClientDto, Client>();
         }
     }
 }
