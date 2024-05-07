@@ -4,7 +4,7 @@ networks:
     clientnetwork:
 
 services:
-  sqldata:
+  clientdb:
       image: mcr.microsoft.com/mssql/server:2019-latest
       environment:
         - SA_PASSWORD=passwd!@345
@@ -13,16 +13,16 @@ services:
         - 1433:1433
       networks:
       - clientnetwork
-  clientmanager:
+  clientapi:
     image: jluka26/clientmanager:latest
     ports:
       - 8080:8080
     build:
       context: /
     depends_on:
-      - sqldata
+      - clientdb
     environment:
-      - db_host=sqldata
+      - db_host=clientdb
       - db_name=ClientDB
       - db_password=passwd!@345
     networks:
