@@ -27,7 +27,8 @@ builder.Services.AddScoped<IClientMapper, ClientMapper>();
 var db_host = Environment.GetEnvironmentVariable("db_host");
 var db_name = Environment.GetEnvironmentVariable("db_name");
 var db_password = Environment.GetEnvironmentVariable("db_password");
-var connString = $"Data Source={db_host};Initial Catalog={db_name};User ID=sa;Password={db_password}";
+var connString = $"Data Source={db_host};Initial Catalog={db_name};Persist Security Info=True;User ID=sa;Password={db_password};TrustServerCertificate=True;";
+//var connString = $"Data Source={db_host};Initial Catalog={db_name};User ID=sa;Password={db_password};TrustServerCertificate=True;";
 builder.Services.AddDbContext<ClientDbContext>(options => options.UseSqlServer(connString));
 
 

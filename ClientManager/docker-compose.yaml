@@ -25,6 +25,7 @@ services:
       - db_host=clientdb
       - db_name=ClientDB
       - db_password=passwd!@345
+      - db_port=1433
     networks:
       - clientnetwork
 
