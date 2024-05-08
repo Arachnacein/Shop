@@ -1,9 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\ClientManager",
-    "\\ClientManager\\Models"
+    "\\ClientManager\\Models",
+    "\\GUI",
+    "\\GUI\\Pages"
   ],
-  "SelectedNode": "\\ClientManager\\Models",
+  "SelectedNode": "\\GUI\\Pages\\Client.razor",
   "PreviewInSolutionExplorer": false
 }

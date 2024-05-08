@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\user\\source\\repos\\shop\\GUI\\GUI.csproj": {}
+    "C:\\Users\\user\\source\\repos\\Shop\\GUI\\GUI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\user\\source\\repos\\shop\\GUI\\GUI.csproj": {
+    "C:\\Users\\user\\source\\repos\\Shop\\GUI\\GUI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\user\\source\\repos\\shop\\GUI\\GUI.csproj",
+        "projectUniqueName": "C:\\Users\\user\\source\\repos\\Shop\\GUI\\GUI.csproj",
         "projectName": "GUI",
-        "projectPath": "C:\\Users\\user\\source\\repos\\shop\\GUI\\GUI.csproj",
+        "projectPath": "C:\\Users\\user\\source\\repos\\Shop\\GUI\\GUI.csproj",
         "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\user\\source\\repos\\shop\\GUI\\obj\\",
+        "outputPath": "C:\\Users\\user\\source\\repos\\Shop\\GUI\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -50,6 +50,14 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Blazored.FluentValidation": {
+              "target": "Package",
+              "version": "[2.1.0, )"
+            },
+            "FluentValidation": {
+              "target": "Package",
+              "version": "[11.9.1, )"
+            },
             "Microsoft.AspNetCore.Components.WebAssembly": {
               "target": "Package",
               "version": "[8.0.2, )"
@@ -70,6 +78,10 @@
               "target": "Package",
               "version": "[8.0.2, )",
               "autoReferenced": true
+            },
+            "MudBlazor": {
+              "target": "Package",
+              "version": "[6.19.1, )"
             }
           },
           "imports": [

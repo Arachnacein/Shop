@@ -1,0 +1,47 @@
+@page "/client"
+@using MudBlazor;
+
+<PageTitle>Zarządzanie klientami</PageTitle>
+
+<h1>Lista klientów</h1>
+
+<Table Hover="true" Elevation="30">
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>Imię</MudTh>
+        <MudTh>Nazwisko</MudTh>
+        <MudTh>Data dołączenia</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr"></MudTd>
+        <MudTd DataLabel="Imię"></MudTd>
+        <MudTd DataLabel="Nazwisko"></MudTd>
+        <MudTd DataLabel="DataDołączenia"></MudTd>
+    </RowTemplate>
+</Table>
+
+
+@code
+{
+ 
+    public ClientViewModel x = new();
+
+
+    
+    private void RefreshData()
+    {
+        int i = 1;
+        @* foreach(var item in apiResponse)
+        {
+            var newClient = new ClientViewModel()
+            {
+                No = ++i,
+                Id = item.Id,
+                Name = item.Name,
+                Surname = item.Surname,
+                RegistryDate = item.RegistryDate
+            };
+            clients.Add(newClient);
+        } *@
+    }
+}

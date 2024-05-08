@@ -1,16 +1,15 @@
-﻿@page "/counter"
+@page "/warehouse"
 
-<PageTitle>Counter</PageTitle>
+<PageTitle>Zarządzanie magazyem</PageTitle>
 
-<h1>Counter</h1>
+<h1>Magazyn</h1>
 
-<p role="status">Current count: @currentCount</p>
+<p role="status">Obecny stan magazynu: @currentCount</p>
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
 @code {
     private int currentCount = 0;
-
 
     private void IncrementCount()
     {
