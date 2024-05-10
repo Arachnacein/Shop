@@ -47,28 +47,28 @@ namespace WarehouseManager.Services
             var mappedProduct = _mapper.Map<Product>(dto);
             _warehouseRepository.UpdateProduct(mappedProduct);   
         }
-        public void UpdateProductPrice(UpdateProductPriceDto dto, decimal price)
+        public void UpdateProductPrice(UpdateProductPriceDto dto)
         {
             var existingProduct = _warehouseRepository.GetProduct(dto.Id);
             if(existingProduct == null)
                 throw new ProductNotFoundException($"Product not found! ID:{dto.Id}");
-            if(price < 0.00M)
-                throw new BadValueException($"Parameter price has incorrect value = {price} should be greater than zero.");
+            if(dto.Price < 0.00M)
+                throw new BadValueException($"Parameter price has incorrect value = {dto.Price} should be greater than zero.");
             
             var mappedProduct = _mapper.Map<Product>(dto);
-            mappedProduct.Price = price;
+            mappedProduct.Price = dto.Price;
             _warehouseRepository.UpdateProduct(mappedProduct);   
         }
-        public void UpdateProductAmount(UpdateProductAmountDto dto, int amount)
+        public void UpdateProductAmount(UpdateProductAmountDto dto)
         {
             var existingProduct = _warehouseRepository.GetProduct(dto.Id);
             if(existingProduct == null)
                 throw new ProductNotFoundException($"Product not found! ID:{dto.Id}");
-            if(amount < 0)
-                throw new BadValueException($"Parameter amount has incorrect value = {amount} should be greater than zero.");
+            if(dto.Amount < 0)
+                throw new BadValueException($"Parameter amount has incorrect value = {dto.Amount} should be greater than zero.");
             
             var mappedProduct = _mapper.Map<Product>(dto);
-            mappedProduct.Amount = amount;
+            mappedProduct.Amount = dto.Amount;
             _warehouseRepository.UpdateProduct(mappedProduct); 
         }
         public void DeleteProduct(int id)

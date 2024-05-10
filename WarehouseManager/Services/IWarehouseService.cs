@@ -9,8 +9,8 @@ namespace WarehouseManager.Services
         ProductDto GetProduct(int id);
         ProductDto AddNewProduct(CreateProductDto dto);
         void UpdateProduct(UpdateProductDto dto);
-        void UpdateProductPrice(UpdateProductPriceDto dto, decimal price);
-        void UpdateProductAmount(UpdateProductAmountDto dto, int amount);
+        void UpdateProductPrice(UpdateProductPriceDto dto);
+        void UpdateProductAmount(UpdateProductAmountDto dto);
         void DeleteProduct(int id);
         int CountProducts();
     }
