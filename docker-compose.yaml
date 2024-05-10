@@ -18,7 +18,7 @@ services:
     ports:
       - 8080:8080
     build:
-      context: /
+      context: /ClientManager
     depends_on:
       - clientdb
     environment:

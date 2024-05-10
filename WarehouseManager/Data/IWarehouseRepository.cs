@@ -4,8 +4,8 @@ namespace WarehouseManager.Data
 {
     public interface IWarehouseRepository
      {
-         bool SaveChanges();
-         IEnumerable<Product> GetProducts();
+        bool SaveChanges();
+        IEnumerable<Product> GetProducts();
         Product GetProduct(int id);
         Product AddProduct(Product product);
         void UpdateProductAmount(Product product, int amountToAdd);
