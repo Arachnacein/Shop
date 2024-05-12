@@ -2,6 +2,7 @@ version: '1.0'
 
 networks:
     clientnetwork:
+    warehousenetwork:
 
 services:
   clientdb:
@@ -29,5 +30,33 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
     networks:
       - clientnetwork
+  
+  
+  warehousedb:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - SA_PASSWORD=value
+      - ACCEPT_EULA=Y
+    ports: 
+      - 1444:1443
+    networks:
+      - warehousenetwork
+  warehouseapi:
+    image: jluka26/clientmanager:latest
+    ports: 
+      - 8081:8080
+    build:
+      context: /WarehouseManager
+    depends_on:
+        - warehousedb
+    environment:
+      - db_host=productdb
+      - db_name=ProductDB
+      - db_password=passwd!@345
+      - db_port=1433
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - warehousenetwork      
+
 
       
