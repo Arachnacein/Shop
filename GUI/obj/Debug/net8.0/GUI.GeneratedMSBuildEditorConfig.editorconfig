@@ -26,6 +26,18 @@ build_property._RazorSourceGeneratorDebug =
 build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/user/source/repos/Shop/GUI/Components/Dialogs/ClientDialogs/DeleteClientDialog.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xEaWFsb2dzXENsaWVudERpYWxvZ3NcRGVsZXRlQ2xpZW50RGlhbG9nLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/user/source/repos/Shop/GUI/Components/Dialogs/ClientDialogs/EditClientDialog.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xEaWFsb2dzXENsaWVudERpYWxvZ3NcRWRpdENsaWVudERpYWxvZy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/user/source/repos/Shop/GUI/Pages/About.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWJvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/user/source/repos/Shop/GUI/Pages/Client.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2xpZW50LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 

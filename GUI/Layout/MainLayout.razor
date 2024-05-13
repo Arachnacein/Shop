@@ -1,8 +1,15 @@
 ﻿@inherits LayoutComponentBase
 <MudThemeProvider/>
-<MudDialogProvider/>
+<MudDialogProvider
+    FullWidth="true"
+    MaxWidth="MaxWidth.ExtraSmall"
+    CloseButton="false"
+    DisableBackdropClick="true"
+    Position="DialogPosition.Center"
+    CloseOnEscapeKey="true"
+/>
 <MudSnackbarProvider/>
-
+<MessageProvider/>
 
 <div class="page">
     <div class="sidebar">
@@ -11,7 +18,7 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">O pracy</a>
+            <a href="/about" target="_blank">O pracy</a>
         </div>
 
         <article class="content px-4">

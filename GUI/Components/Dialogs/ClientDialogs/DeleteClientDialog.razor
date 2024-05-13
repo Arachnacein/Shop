@@ -1,0 +1,37 @@
+<MudDialog>
+    <DialogContent>
+        Czy na pewno chcesz usunąć klienta <b>@DialogModel.Name @DialogModel.Surname</b>?
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="Submit">Tak</MudButton>
+        <MudButton OnClick="Cancel">Anuluj</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Inject] private ISnackbar Snackbar { get; set; }
+    private ClientViewModel DialogModel { get; set; }
+
+    [Parameter] public Guid ClientId { get; set; }
+    [Parameter] public string ClientName { get; set; }
+    [Parameter] public string ClientSurname { get; set; }
+
+    protected override void OnInitialized()
+    {
+        DialogModel = new ClientViewModel()
+        {
+            Id = ClientId,
+            Name = ClientName,
+            Surname = ClientSurname
+        };
+    }
+
+    private void Submit()
+    {
+        //api onection
+        Snackbar.Add($"Pomyślnie usunięto klienta.", Severity.Info);
+        MudDialog.Cancel();
+    }
+    private void Cancel() => MudDialog.Cancel();
+}
