@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Ap0VBO+9WFTiHLfyNdSidTI7wwsohaFDUdng1QksFjzcWBZB1bQLxYhdGBcc8yIE03RU+JQOV8IEEEekEvbbdA==",
+  "dgSpecHash": "UzOJgpnqJP80kGsxqmtmIs89mTXATUl0rYUVVoCRpmwG6vT7Mns6u6qTxxvNdtRcA9QObyUuAykuspRGmZ4voA==",
   "success": true,
   "projectFilePath": "C:\\Users\\user\\source\\repos\\Shop\\GUI\\GUI.csproj",
   "expectedPackageFiles": [
@@ -35,6 +35,7 @@
     "C:\\Users\\user\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.2\\microsoft.net.illink.tasks.8.0.2.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.net.sdk.webassembly.pack\\8.0.2\\microsoft.net.sdk.webassembly.pack.8.0.2.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\mudblazor\\6.19.1\\mudblazor.6.19.1.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\mudblazor.thememanager\\1.0.9\\mudblazor.thememanager.1.0.9.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\system.io.pipelines\\8.0.0\\system.io.pipelines.8.0.0.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\system.text.encodings.web\\8.0.0\\system.text.encodings.web.8.0.0.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\system.text.json\\8.0.0\\system.text.json.8.0.0.nupkg.sha512",

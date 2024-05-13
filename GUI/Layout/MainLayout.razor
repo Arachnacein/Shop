@@ -1,5 +1,8 @@
 ﻿@inherits LayoutComponentBase
-<MudThemeProvider/>
+@using MudBlazor;
+@inject MudThemeProvider _mudThemeProvider
+
+<MudThemeProvider  @ref="@_mudThemeProvider" IsDarkMode="_mudThemeProvider.IsDarkMode"/>
 <MudDialogProvider
     FullWidth="true"
     MaxWidth="MaxWidth.ExtraSmall"
@@ -19,6 +22,9 @@
     <main>
         <div class="top-row px-4">
             <a href="/about" target="_blank">O pracy</a>
+            <MudToggleIconButton @bind-Toggled="@_mudThemeProvider.IsDarkMode"
+                     Icon="@Icons.Material.Filled.LightMode" Color="@Color.Error" Title="Off"
+                     ToggledIcon="@Icons.Material.Filled.DarkMode" ToggledColor="@Color.Success" ToggledTitle="On"/>
         </div>
 
         <article class="content px-4">
@@ -26,3 +32,18 @@
         </article>
     </main>
 </div>
+
+@code {
+    @* private bool _isDarkMode;
+    private MudThemeProvider _mudThemeProvider;
+    
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _isDarkMode = await _mudThemeProvider.GetSystemPreference();
+            StateHasChanged();
+        }
+    } *@
+}
