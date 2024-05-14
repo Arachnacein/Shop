@@ -36,7 +36,11 @@ namespace OrderManager.Services
         public OrderDto CreateOrder(CreateOrderDto dto)
         {
             var mappedOrder = _mapper.Map<Order>(dto);
+
             mappedOrder.CreateDate = DateTime.Now;
+            mappedOrder.CompletionDate = DateTime.MinValue;
+            mappedOrder.Finished = false;
+
             _repository.Create(mappedOrder);
             return _orderMapper.Map(mappedOrder);
         }
@@ -46,6 +50,7 @@ namespace OrderManager.Services
             if(existingOrder == null)
                 throw new OrderNotFoundException($"Order not found id:{dto.Id}");
             var mappedOrder = _mapper.Map<Order>(dto);
+            mappedOrder.CreateDate = existingOrder.CreateDate;
             _repository.Update(mappedOrder);
         }
         public void DeleteOrder(int id)

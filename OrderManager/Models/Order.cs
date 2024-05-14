@@ -22,7 +22,7 @@ namespace OrderManager.Models
         [Required]
         public DateTime CreateDate { get; set; }
 
-        [Required]
+ 
         public DateTime CompletionDate { get; set; }
 
         [Required]
