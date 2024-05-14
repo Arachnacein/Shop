@@ -3,6 +3,7 @@ version: '1.0'
 networks:
     clientnetwork:
     warehousenetwork:
+    ordersnetwork:
 
 services:
   clientdb:
@@ -29,8 +30,7 @@ services:
       - db_port=1433
       - ASPNETCORE_ENVIRONMENT=Development
     networks:
-      - clientnetwork
-  
+      - clientnetwork 
   
   warehousedb:
     image: mcr.microsoft.com/mssql/server:2019-latest
@@ -58,5 +58,28 @@ services:
     networks:
       - warehousenetwork      
 
-
-      
+  orderdb:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        environment:
+          - SA_PASSWORD=passwd!@345
+          - ACCEPT_EULA=Y
+        ports:
+          - 1435:1433
+        networks:
+        - ordersnetwork
+  orderapi:
+      image: jluka26/ordermanager:latest
+      ports:
+        - 8082:8080
+      build:
+        context: /OrderManager
+      depends_on:
+        - orderdb
+      environment:
+        - db_host=orderdb
+        - db_name=OrderDB
+        - db_password=passwd!@345
+        - db_port=1435
+        - ASPNETCORE_ENVIRONMENT=Development
+      networks:
+        - ordersnetwork
