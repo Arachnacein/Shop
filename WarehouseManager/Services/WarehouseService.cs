@@ -6,6 +6,8 @@ using WarehouseManager.Exceptions;
 using WarehouseManager.Mappers;
 using Microsoft.IdentityModel.Tokens;
 
+
+
 namespace WarehouseManager.Services
 {
     public class WarehouseService : IWarehouseService
@@ -35,16 +37,29 @@ namespace WarehouseManager.Services
         }
         public ProductDto AddNewProduct(CreateProductDto dto)
         {
-            var mappedProduct = _mapper.Map<Product>(dto);
-            _warehouseRepository.AddProduct(mappedProduct);
-            return _productMapper.Map(mappedProduct);
+            Product product = new Product();
+            product.Name = dto.Name;
+            product.Price = dto.Price;
+            product.Amount = dto.Amount;
+            product.UnitType = dto.UnitType.GetEnumValueByDescription<UnitEnum>();
+            product.ProductType = dto.ProductType.GetEnumValueByDescription<ProductTypeEnum>();
+            
+            _warehouseRepository.AddProduct(product);
+            return _productMapper.Map(product);
         }
         public void UpdateProduct(UpdateProductDto dto)
         {
             var existingProduct = _warehouseRepository.GetProduct(dto.Id);
             if(existingProduct == null)
                 throw new ProductNotFoundException($"Product not found! ID:{dto.Id}");
-            var mappedProduct = _mapper.Map<Product>(dto);
+            Product product = new Product();
+            product.Id = dto.Id;
+            product.Name = dto.Name;
+            product.Price = dto.Price;
+            product.Amount = dto.Amount;
+            product.UnitType = dto.UnitType.GetEnumValueByDescription<UnitEnum>();
+            product.ProductType = dto.ProductType.GetEnumValueByDescription<ProductTypeEnum>();
+            var mappedProduct = _mapper.Map<Product>(product);
             _warehouseRepository.UpdateProduct(mappedProduct);   
         }
         public void UpdateProductPrice(UpdateProductPriceDto dto)
@@ -55,9 +70,9 @@ namespace WarehouseManager.Services
             if(dto.Price < 0.00M)
                 throw new BadValueException($"Parameter price has incorrect value = {dto.Price} should be greater than zero.");
             
-            var mappedProduct = _mapper.Map<Product>(dto);
-            mappedProduct.Price = dto.Price;
-            _warehouseRepository.UpdateProduct(mappedProduct);   
+            existingProduct.Price = dto.Price;
+            //var mappedProduct = _mapper.Map<Product>(existingProduct);
+            _warehouseRepository.UpdateProduct(existingProduct);   
         }
         public void UpdateProductAmount(UpdateProductAmountDto dto)
         {
@@ -67,9 +82,9 @@ namespace WarehouseManager.Services
             if(dto.Amount < 0)
                 throw new BadValueException($"Parameter amount has incorrect value = {dto.Amount} should be greater than zero.");
             
-            var mappedProduct = _mapper.Map<Product>(dto);
-            mappedProduct.Amount = dto.Amount;
-            _warehouseRepository.UpdateProduct(mappedProduct); 
+            //var mappedProduct = _mapper.Map<Product>(dto);
+            existingProduct.Amount = dto.Amount;
+            _warehouseRepository.UpdateProduct(existingProduct); 
         }
         public void DeleteProduct(int id)
         {
