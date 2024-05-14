@@ -1,7 +1,7 @@
+using Microsoft.AspNetCore.Mvc;
 using ClientManager.Dtos;
 using ClientManager.Exceptions;
 using ClientManager.Services;
-using Microsoft.AspNetCore.Mvc;
 
 namespace ClientManager.Controllers
 {

@@ -1,4 +1,6 @@
 using System.ComponentModel;
+using System.Runtime.Serialization;
+
 
 namespace WarehouseManager.Models
 {
