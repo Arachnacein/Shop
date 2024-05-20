@@ -1,6 +1,7 @@
 @page "/client"
 @using MudBlazor;
 @inject IDialogService DialogService
+@inject HttpClient httpClient
 
 <PageTitle>Zarządzanie klientami</PageTitle>
 
@@ -8,14 +9,12 @@
 
 <MudTable Items="@clients" Hover="true" Elevation="30" Dense=true Striped=true SortLabel="Sort By">
     <HeaderContent>
-        <MudTh>Nr</MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<ClientViewModel, object>(x=>x.Name)">Imię</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<ClientViewModel, object>(x=>x.Surname)">Nazwisko</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<ClientViewModel, object>(x=>x.RegistryDate)">Data dołączenia</MudTableSortLabel></MudTh>
         <MudTh>Options</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Nr">@context.No</MudTd>
         <MudTd DataLabel="Imię">@context.Name</MudTd>
         <MudTd DataLabel="Nazwisko">@context.Surname</MudTd>
         <MudTd DataLabel="DataDołączenia">@context.RegistryDate</MudTd>
@@ -32,66 +31,26 @@
 
 @code
 {
+    private List<ClientViewModel> clients;
+    private ClientViewModel client = new ClientViewModel();
 
-    public List<ClientViewModel> clients = new();
-
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        GetClientsList();
-
+        await base.OnInitializedAsync();
+        await GetClientsList();
     }
     
-    private void GetClientsList()
+    private async Task GetClientsList()
     {
-        // get api connection
-         clients = new List<ClientViewModel>()
-            {
-            new ClientViewModel{
-                Id = Guid.NewGuid(),
-                No = 1,
-                Name = "Jan",
-                Surname = "Kowalski",
-                RegistryDate = DateTime.Now
-            },
-            new ClientViewModel{
-                Id = Guid.NewGuid(),
-                No = 2,
-                Name = "Anna",
-                Surname = "Nowak",
-                RegistryDate = DateTime.Now.AddDays(-5)
-            },
-            new ClientViewModel{
-                Id = Guid.NewGuid(),
-                No = 3,
-                Name = "Andrzej",
-                Surname = "Duda",
-                RegistryDate = DateTime.Now.AddMonths(-2)
-            },
-            new ClientViewModel{
-                Id = Guid.NewGuid(),
-                No = 4,
-                Name = "sad",
-                Surname = "2dsad",
-                RegistryDate = DateTime.Now.AddMonths(-2)
-            }      
-            };
+        // get api response
+        var clients = await httpClient.GetFromJsonAsync<List<ClientViewModel>>("/api/client");
+    
+        
     }
 
     private void RefreshData()
     {
-        int i = 1;
-        @* foreach(var item in apiResponse)
-        {
-            var newClient = new ClientViewModel()
-            {
-                No = ++i,
-                Id = item.Id,
-                Name = item.Name,
-                Surname = item.Surname,
-                RegistryDate = item.RegistryDate
-            };
-            clients.Add(newClient);
-        } *@
+
     }
 
     private void DeleteClient(ClientViewModel model)

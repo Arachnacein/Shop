@@ -4,6 +4,7 @@ networks:
     clientnetwork:
     warehousenetwork:
     ordersnetwork:
+    frontendnetwork:
 
 services:
   clientdb:
@@ -93,3 +94,12 @@ services:
       - clientnetwork
       - warehousenetwork
       - ordersnetwork
+      - frontendnetwork
+
+  gui:
+    build:
+      context: /GUI
+    ports:
+      - 8011:8080
+    networks:
+      - frontendnetwork
