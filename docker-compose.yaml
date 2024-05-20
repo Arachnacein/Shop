@@ -17,8 +17,8 @@ services:
       - clientnetwork
   clientapi:
     image: jluka26/clientmanager:latest
-    ports:
-      - 8080:8080
+    # ports:
+    #   - 8080:8080
     build:
       context: /ClientManager
     depends_on:
@@ -43,8 +43,8 @@ services:
       - warehousenetwork
   warehouseapi:
     image: jluka26/warehousemanager:latest
-    ports: 
-      - 8081:8080
+    # ports: 
+    #   - 8081:8080
     build:
       context: /WarehouseManager
     depends_on:
@@ -69,8 +69,8 @@ services:
         - ordersnetwork
   orderapi:
       image: jluka26/ordermanager:latest
-      ports:
-        - 8082:8080
+      # ports:
+      #   - 8082:8080
       build:
         context: /OrderManager
       depends_on:
@@ -83,3 +83,13 @@ services:
         - ASPNETCORE_ENVIRONMENT=Development
       networks:
         - ordersnetwork
+
+  apigateway:
+    build:
+      context: /ApiGateway
+    ports:
+      - 8010:8080
+    networks:
+      - clientnetwork
+      - warehousenetwork
+      - ordersnetwork
