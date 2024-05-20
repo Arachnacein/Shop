@@ -1,0 +1,40 @@
+<MudDialog>
+    <DialogContent>
+        Edycja klienta
+        <MudTextField Label="Imię" @bind-Value="DialogModel.Name" />
+        <MudTextField Label="Nazwisko" @bind-Value="DialogModel.Surname" />
+    </DialogContent>
+    <DialogActions>
+
+        <MudButton Color="Color.Primary" OnClick="Submit">Tak</MudButton>
+        <MudButton OnClick="Cancel">Anuluj</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Inject] private ISnackbar Snackbar { get; set; }
+    private ClientViewModel DialogModel { get; set; }
+
+    [Parameter] public Guid ClientId { get; set; }
+    [Parameter] public string ClientName { get; set; }
+    [Parameter] public string ClientSurname { get; set; }
+
+    protected override void OnInitialized()
+    {
+        DialogModel = new ClientViewModel()
+        {
+            Id = ClientId,
+            Name = ClientName,
+            Surname = ClientSurname
+        };
+    }
+
+    void Submit()
+    {
+        //api onection
+        Snackbar.Add($"Edytowano klienta. Nowe imię:{DialogModel.Name} Nowe nazwisko: {DialogModel.Surname}.", Severity.Info);
+        MudDialog.Cancel();
+    }
+    void Cancel() => MudDialog.Cancel();
+}
