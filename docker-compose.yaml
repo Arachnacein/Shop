@@ -96,10 +96,10 @@ services:
       - ordersnetwork
       - frontendnetwork
 
-  gui:
+  ui:
     build:
-      context: /GUI
+      context: /UI
     ports:
-      - 8011:8080
+      - 8011:80
     networks:
       - frontendnetwork

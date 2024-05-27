@@ -6,9 +6,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.SetBasePath(builder.Environment.ContentRootPath)
     .AddJsonFile("ocelot_config.json", optional:false, reloadOnChange:true)
     .AddEnvironmentVariables();
+
 builder.Services.AddOcelot(builder.Configuration);
 
 var app = builder.Build();
-app.UseOcelot();
+await app.UseOcelot();
 
 app.Run();
