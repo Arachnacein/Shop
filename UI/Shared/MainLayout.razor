@@ -1,0 +1,36 @@
+﻿@inherits LayoutComponentBase
+@using MudBlazor;
+@inject MudThemeProvider _mudThemeProvider
+<PageTitle>UI</PageTitle>
+
+
+<MudThemeProvider @ref="@_mudThemeProvider" IsDarkMode="_mudThemeProvider.IsDarkMode"/>
+<MudDialogProvider
+    FullWidth="true"
+    MaxWidth="MaxWidth.ExtraSmall"
+    CloseButton="false"
+    DisableBackdropClick="true"
+    Position="DialogPosition.Center"
+    CloseOnEscapeKey="true"
+/>
+<MudSnackbarProvider/>
+<MessageProvider/>
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <a href="/about" target="_blank">O pracy</a>
+            <MudToggleIconButton @bind-Toggled="@_mudThemeProvider.IsDarkMode"
+             Icon="@Icons.Material.Filled.LightMode" Color="@Color.Error" Title="Off"
+             ToggledIcon="@Icons.Material.Filled.DarkMode" ToggledColor="@Color.Success" ToggledTitle="On"/>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>

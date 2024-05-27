@@ -1,0 +1,102 @@
+@page "/client"
+@using MudBlazor;
+@inject IDialogService DialogService
+@inject HttpClient httpClient
+
+<PageTitle>Zarządzanie klientami</PageTitle>
+
+<h1>Lista klientów</h1>
+
+<MudTable Items="@clients" Hover="true" Elevation="30" Dense=true Striped=true SortLabel="Sort By">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="new Func<ClientViewModel, object>(x=>x.Name)">Imię</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<ClientViewModel, object>(x=>x.Surname)">Nazwisko</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<ClientViewModel, object>(x=>x.RegistryDate)">Data dołączenia</MudTableSortLabel></MudTh>
+        <MudTh>Options</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Imię">@context.Name</MudTd>
+        <MudTd DataLabel="Nazwisko">@context.Surname</MudTd>
+        <MudTd DataLabel="DataDołączenia">@context.RegistryDate</MudTd>
+        <MudTd DataLabel="Options">
+            <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" IconSize="Size.Medium" OnClick="@( () => EditClient(context) )"/>
+            <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" IconSize="Size.Medium" OnClick="@( () => DeleteClient(context) )"/>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager InfoFormat="{first_item}-{last_item} z {all_items}" RowsPerPageString="Wierszy na stronę:"></MudTablePager>
+    </PagerContent>
+</MudTable>
+
+
+@code
+{
+    private List<ClientViewModel> clients = new List<ClientViewModel>();
+    private ClientViewModel client = new ClientViewModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        GetClientsList();
+    }
+    
+    private async Task GetClientsList()
+    {
+        // get api response
+        try
+        {
+            clients = await httpClient.GetFromJsonAsync<List<ClientViewModel>>("/api/client");
+            StateHasChanged();
+        }
+        catch (HttpRequestException ex)
+        {   
+            Console.WriteLine("-------------------------------------------------");
+            Console.WriteLine("Wystąpił błąd podczas pobierania listy klientów: " + ex.Message);
+            Console.WriteLine("-------------------------------------------------");
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine("-------------------------------------------------");
+            Console.WriteLine("Wystąpił błąd: " + e.Message);
+            Console.WriteLine("-------------------------------------------------");
+        }
+    }
+
+    private void RefreshData()
+    {
+        int i = 1;
+        @* foreach(var item in apiResponse)
+        {
+            var newClient = new ClientViewModel()
+            {
+                No = ++i,
+                Id = item.Id,
+                Name = item.Name,
+                Surname = item.Surname,
+                RegistryDate = item.RegistryDate
+            };
+            clients.Add(newClient);
+        } *@
+    }
+
+    private void DeleteClient(ClientViewModel model)
+    {
+        var parameters = new DialogParameters();
+        parameters[nameof(UI.Components.Dialogs.ClientDialogs.DeleteClientDialog.ClientId)] = model.Id;
+        parameters[nameof(UI.Components.Dialogs.ClientDialogs.DeleteClientDialog.ClientName)] = model.Name;
+        parameters[nameof(UI.Components.Dialogs.ClientDialogs.DeleteClientDialog.ClientSurname)] = model.Surname;
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        DialogService.Show<UI.Components.Dialogs.ClientDialogs.DeleteClientDialog>("Usuwanie klienta", parameters, options);
+    }
+
+    private void EditClient(ClientViewModel model)
+    {    
+        var parameters = new DialogParameters();
+        parameters[nameof(UI.Components.Dialogs.ClientDialogs.DeleteClientDialog.ClientId)] = model.Id;
+        parameters[nameof(UI.Components.Dialogs.ClientDialogs.DeleteClientDialog.ClientName)] = model.Name;
+        parameters[nameof(UI.Components.Dialogs.ClientDialogs.DeleteClientDialog.ClientSurname)] = model.Surname;
+        
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        DialogService.Show<UI.Components.Dialogs.ClientDialogs.EditClientDialog>("Edycja klienta", parameters, options);
+    }
+}
