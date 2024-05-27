@@ -4,12 +4,12 @@
 
 <MudDialog>
     <DialogContent>
-        Edycja klienta
+        Dodawanie nowego klienta
         <MudTextField Label="Imię" @bind-Value="DialogModel.Name" />
         <MudTextField Label="Nazwisko" @bind-Value="DialogModel.Surname" />
     </DialogContent>
     <DialogActions>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit">Potwierdź</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit">Dodaj</MudButton>
         <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="Cancel">Anuluj</MudButton>
     </DialogActions>
 </MudDialog>
@@ -17,29 +17,21 @@
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     [Inject] private ISnackbar Snackbar { get; set; }
-    private ClientViewModel DialogModel { get; set; }
-
-    [Parameter] public Guid ClientId { get; set; }
-    [Parameter] public string ClientName { get; set; }
-    [Parameter] public string ClientSurname { get; set; }
     [Parameter] public Func<Task> OnSuccess { get; set; }
+    private ClientViewModel DialogModel = new ClientViewModel();
 
     protected override void OnInitialized()
     {
-        DialogModel = new ClientViewModel()
-        {
-            Id = ClientId,
-            Name = ClientName,
-            Surname = ClientSurname
-        };
+        DialogModel.Name = string.Empty;
+        DialogModel.Surname = string.Empty;
     }
 
     private async Task Submit()
     {
-        var result = await httpClient.PutAsJsonAsync($"/api/client", DialogModel);
-        if(result.StatusCode == HttpStatusCode.NoContent)
+        var result = await httpClient.PostAsJsonAsync<ClientViewModel>($"/api/client", DialogModel);
+        if(result.StatusCode == HttpStatusCode.Created)
         {
-            Snackbar.Add("Pomyślnie edytowano klienta.", Severity.Info);
+            Snackbar.Add("Pomyślnie dodano klienta.", Severity.Info);
             MudDialog.Cancel();
             if(OnSuccess != null)
                 await OnSuccess.Invoke();
