@@ -1,18 +1,108 @@
 @page "/warehouse"
+@using MudBlazor;
+@using UI.Models;
+@using UI.Extensions;
+@inject IDialogService DialogService
+@inject HttpClient httpClient
 
-<PageTitle>Zarządzanie magazyem</PageTitle>
 
-<h1>Magazyn</h1>
+<PageTitle>Zarządzanie magazynem</PageTitle>
 
-<p role="status">Obecny stan magazynu: @currentCount</p>
+<h1>Lista produktów w magazynie</h1>
+<MudPaper Class="pa-4 ma-2" Elevation="3">
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddProduct">Dodaj nowy produkt</MudButton>
+</MudPaper>
+    <MudPaper Class="pa-8 ma-2" Elevation="3">
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+    <MudTable Items="@products" Hover="true" Elevation="30" Dense=true Striped=true SortLabel="Sort By">
+        <HeaderContent>
+            <MudTh><MudTableSortLabel SortBy="new Func<ProductViewModel, object>(x=>x.Name)">Imię</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<ProductViewModel, object>(x=>x.Price)">Cena</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<ProductViewModel, object>(x=>x.Amount)">Ilość</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<ProductViewModel, object>(x=>x.UnitType)">Jednostka</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<ProductViewModel, object>(x=>x.ProductType)">Typ</MudTableSortLabel></MudTh>
+            <MudTh>Options</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Imię">@context.Name</MudTd>
+            <MudTd DataLabel="Cena">@context.Price</MudTd>
+            <MudTd DataLabel="Ilość">@context.Amount</MudTd>
+            <MudTd DataLabel="Jednostka">@context.UnitType.GetEnumDescription()</MudTd>
+            <MudTd DataLabel="Typ">@context.ProductType.GetEnumDescription()</MudTd>
+            <MudTd DataLabel="Options">
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" IconSize="Size.Medium" OnClick="@( () => EditProduct(context) )"/>
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" IconSize="Size.Medium" OnClick="@( () => DeleteProduct(context) )"/>
+            </MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager InfoFormat="{first_item}-{last_item} z {all_items}" RowsPerPageString="Wierszy na stronę:"></MudTablePager>
+        </PagerContent>
+    </MudTable>
+</MudPaper>
 
-@code {
-    private int currentCount = 0;
 
-    private void IncrementCount()
+@code
+{
+    private List<ProductViewModel> products = new List<ProductViewModel>();
+
+    protected override async Task OnInitializedAsync()
     {
-        currentCount++;
+        await base.OnInitializedAsync();
+        RefreshProductsList();
+    }
+
+    private async Task RefreshProductsList()
+    {
+        try
+        {
+            products = await httpClient.GetFromJsonAsync<List<ProductViewModel>>("/api/product");
+            StateHasChanged();
+        }
+        catch (HttpRequestException ex)
+        {   
+            Console.WriteLine("-------------------------------------------------");
+            Console.WriteLine("Wystąpił błąd podczas pobierania listy produktów: " + ex.Message);
+            Console.WriteLine("-------------------------------------------------");
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine("-------------------------------------------------");
+            Console.WriteLine("Wystąpił błąd: " + e.Message);
+            Console.WriteLine("-------------------------------------------------");
+        }
+    }
+
+    private void DeleteProduct(ProductViewModel model)
+    {
+        var parameters = new DialogParameters();
+        parameters[nameof(UI.Components.Dialogs.ProductDialogs.DeleteProductDialog.ProductId)] = model.Id;
+        parameters[nameof(UI.Components.Dialogs.ProductDialogs.DeleteProductDialog.ProductName)] = model.Name;
+        parameters["OnSuccess"] = new Func<Task>(RefreshProductsList);
+
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        DialogService.Show<UI.Components.Dialogs.ProductDialogs.DeleteProductDialog>("Usuwanie produktu", parameters, options);
+    }
+
+    private void EditProduct(ProductViewModel model)
+    {    
+        var parameters = new DialogParameters();
+        parameters[nameof(UI.Components.Dialogs.ProductDialogs.EditProductDialog.ProductId)] = model.Id;
+        parameters[nameof(UI.Components.Dialogs.ProductDialogs.EditProductDialog.ProductName)] = model.Name;
+        parameters[nameof(UI.Components.Dialogs.ProductDialogs.EditProductDialog.ProductPrice)] = model.Price;
+        parameters[nameof(UI.Components.Dialogs.ProductDialogs.EditProductDialog.ProductAmount)] = model.Amount;
+        parameters[nameof(UI.Components.Dialogs.ProductDialogs.EditProductDialog.ProductUnitType)] = model.UnitType.GetEnumDescription();
+        parameters[nameof(UI.Components.Dialogs.ProductDialogs.EditProductDialog.ProductProductType)] = model.ProductType.GetEnumDescription();
+        parameters["OnSuccess"] = new Func<Task>(RefreshProductsList);
+
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        DialogService.Show<UI.Components.Dialogs.ProductDialogs.EditProductDialog>("Edycja produktu", parameters, options);
+    }
+
+    private void AddProduct()
+    {
+        var parameters = new DialogParameters();
+        parameters["OnSuccess"] = new Func<Task>(RefreshProductsList);
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        DialogService.Show<UI.Components.Dialogs.ProductDialogs.AddProductDialog>("Dodawanie nowego produktu", parameters, options);
     }
 }

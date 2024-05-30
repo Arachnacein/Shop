@@ -1,0 +1,69 @@
+@inject HttpClient httpClient
+@using System.Net
+@using System.Collections.Generic
+@using UI.Enums;
+@using UI.Extensions;
+
+<MudDialog>
+    <DialogContent>
+        Dodawanie nowego produktu
+        <MudTextField Label="Nazwa" @bind-Value="DialogModel.Name" />
+        <MudTextField T="decimal" Label="Cena" @bind-Value="DialogModel.Price" />
+        <MudTextField T="int" Label="Ilość w magazynie" @bind-Value="DialogModel.Amount" />
+        <MudSelect @bind-Value="DialogModel.UnitType" Label="Jednostka" AdornmentColor="Color.Secondary">
+            @foreach (UnitEnum item in Enum.GetValues(typeof(UnitEnum)))
+            {
+                <MudSelectItem Value="@item">@item.GetEnumDescription()</MudSelectItem>
+            }
+        </MudSelect>
+        <MudSelect @bind-Value="DialogModel.ProductType" Label="Typ" AdornmentColor="Color.Secondary">
+            @foreach (ProductTypeEnum item in Enum.GetValues(typeof(ProductTypeEnum)))
+            {
+                <MudSelectItem Value="@item">@item.GetEnumDescription()</MudSelectItem>
+            }
+        </MudSelect>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit">Dodaj</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="Cancel">Anuluj</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Inject] private ISnackbar Snackbar { get; set; }
+    [Parameter] public Func<Task> OnSuccess { get; set; }
+    private ProductViewModel DialogModel = new ProductViewModel();
+
+    protected override void OnInitialized()
+    {
+        DialogModel.Name = string.Empty;
+        DialogModel.Price = 0.0M;
+        DialogModel.Amount = 0;
+        DialogModel.UnitType = UnitEnum.Liter;
+        DialogModel.ProductType = ProductTypeEnum.Liquid;
+    }
+
+    private async Task Submit()
+    {
+        var result = await httpClient.PostAsJsonAsync($"/api/product", new
+        {
+            Id = DialogModel.Id,
+            Name = DialogModel.Name,
+            Price = DialogModel.Price,
+            Amount = DialogModel.Amount,
+            UnitType = DialogModel.UnitType.GetEnumDescription(),
+            ProductType = DialogModel.ProductType.GetEnumDescription()
+        });
+        if(result.StatusCode == HttpStatusCode.Created)
+        {
+            Snackbar.Add("Pomyślnie dodano produkt.", Severity.Info);
+            MudDialog.Cancel();
+            if(OnSuccess != null)
+                await OnSuccess.Invoke();
+        }
+        else
+            Snackbar.Add($"Coś poszło nie tak.", Severity.Warning);
+    }
+    void Cancel() => MudDialog.Cancel();
+}
