@@ -16,7 +16,7 @@
 
     <MudTable Items="@products" Hover="true" Elevation="30" Dense=true Striped=true SortLabel="Sort By">
         <HeaderContent>
-            <MudTh><MudTableSortLabel SortBy="new Func<ProductViewModel, object>(x=>x.Name)">Imię</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<ProductViewModel, object>(x=>x.Name)">Nazwa</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<ProductViewModel, object>(x=>x.Price)">Cena</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<ProductViewModel, object>(x=>x.Amount)">Ilość</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<ProductViewModel, object>(x=>x.UnitType)">Jednostka</MudTableSortLabel></MudTh>
