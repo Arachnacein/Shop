@@ -1,0 +1,91 @@
+@inject HttpClient httpClient
+@using System.Net
+@using System.Collections.Generic
+@using UI.Enums;
+@using UI.Extensions;
+
+<MudDialog>
+    <DialogContent>
+        Edycja produktu
+        <MudTextField Label="Nazwa" @bind-Value="DialogModel.Name" />
+        <MudTextField Label="Cena" @bind-Value="DialogModel.Price" />
+        <MudTextField Label="Ilość" @bind-Value="DialogModel.Amount" />
+        <MudSelect @bind-Value="DialogModel.UnitType" Label="Jednostka" AdornmentColor="Color.Secondary">
+            @foreach (UnitEnum item in Enum.GetValues(typeof(UnitEnum)))
+            {
+                <MudSelectItem Value="@item">@item.GetEnumDescription()</MudSelectItem>
+            }
+        </MudSelect>
+        <MudSelect @bind-Value="DialogModel.ProductType" Label="Typ" AdornmentColor="Color.Secondary">
+            @foreach (ProductTypeEnum item in Enum.GetValues(typeof(ProductTypeEnum)))
+            {
+                <MudSelectItem Value="@item">@item.GetEnumDescription()</MudSelectItem>
+            }
+        </MudSelect>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit">Potwierdź</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="Cancel">Anuluj</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Inject] private ISnackbar Snackbar { get; set; }
+    private ProductViewModel DialogModel { get; set; }
+
+    [Parameter] public int ProductId { get; set; }
+    [Parameter] public string ProductName { get; set; }
+    [Parameter] public decimal ProductPrice { get; set; }
+    [Parameter] public int ProductAmount { get; set; }
+    [Parameter] public string ProductUnitType { get; set; }
+    [Parameter] public string ProductProductType { get; set; }
+    [Parameter] public Func<Task> OnSuccess { get; set; }
+
+    protected override void OnInitialized()
+    {
+        DialogModel = new ProductViewModel()
+        {
+            Id = ProductId,
+            Name = ProductName,
+            Price = ProductPrice,
+            Amount = ProductAmount,
+            UnitType = ProductUnitType.GetEnumValueByDescription<UnitEnum>(),
+            ProductType = ProductProductType.GetEnumValueByDescription<ProductTypeEnum>()
+        };
+    }
+
+    private async Task Submit()
+    {
+        Validate();
+        var result = await httpClient.PutAsJsonAsync($"/api/product", new
+        {
+            Id = DialogModel.Id,
+            Name = DialogModel.Name,
+            Price = DialogModel.Price,
+            Amount = DialogModel.Amount,
+            UnitType = DialogModel.UnitType.GetEnumDescription(),
+            ProductType = DialogModel.ProductType.GetEnumDescription()
+        });
+        if(result.StatusCode == HttpStatusCode.NoContent)
+        {
+            Snackbar.Add("Pomyślnie edytowano produkt.", Severity.Info);
+            MudDialog.Cancel();
+            if(OnSuccess != null)
+                await OnSuccess.Invoke();
+        }
+        else
+            Snackbar.Add($"Coś poszło nie tak.", Severity.Warning);
+    }
+    void Cancel() => MudDialog.Cancel();
+
+    private void Validate()
+    {
+        if(DialogModel.Price < 0.0M) 
+            Snackbar.Add($"Cena nie może być mniejsza niż 0!", Severity.Warning);
+        if(DialogModel.Amount < 0)
+            Snackbar.Add($"Ilość nie może być mniejsza niż 0!", Severity.Warning);
+        if(DialogModel.Name.Length < 4)
+            Snackbar.Add($"Nazwa musi być dłuższa niż 3 znaki!", Severity.Warning);
+    }
+}
