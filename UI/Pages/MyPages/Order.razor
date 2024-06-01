@@ -1,18 +1,161 @@
 @page "/order"
+@using MudBlazor;
+@using UI.Models;
+@using UI.Extensions;
+@inject IDialogService DialogService
+@inject HttpClient httpClient
+
 
 <PageTitle>Zarządzanie zamówieniami</PageTitle>
 
-<h1>Zamówenia</h1>
+<h1>Lista zamówień</h1>
+<MudPaper Class="pa-4 ma-2" Elevation="3">
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddOrder">Dodaj nowe zamówienie</MudButton>
+</MudPaper>
+    <MudPaper Class="pa-8 ma-2" Elevation="3">
 
-<p role="status">Obecne zamówienia: @currentCount</p>
+    <MudTable Items="@orders" Hover="true" Elevation="30" Dense=true Striped=true SortLabel="Sort By">
+        <HeaderContent>
+            <MudTh><MudTableSortLabel SortBy="new Func<OrderViewModel, object>(x=>x.Id_User)">Użytkownik</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<OrderViewModel, object>(x=>x.Id_Product)">Produkt</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<OrderViewModel, object>(x=>x.Amount)">Ilość</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<OrderViewModel, object>(x=>x.Price)">Cena</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<OrderViewModel, object>(x=>x.CreateDate)">Data utworzenia</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<OrderViewModel, object>(x=>x.CompletionDate)">Data ukończenia</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<OrderViewModel, object>(x=>x.Finished)">Zamknięte?</MudTableSortLabel></MudTh>
+            <MudTh>Opcje</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Klient">
+                @{
+                    var user = clients.SingleOrDefault(x => x.Id == context.Id_User);
+                    @if(user != null)
+                        {@user.Name @user.Surname}
+                    else {<MudIcon Icon="@Icons.Material.Filled.Error" Title="Błąd"/>}
+                }
+            </MudTd>
+            <MudTd DataLabel="Produkt">
+                @{
+                    var product = products.SingleOrDefault(x => x.Id == context.Id_Product);
+                    @if(product != null)
+                        @product.Name
+                    else {<MudIcon Icon="@Icons.Material.Filled.Error" Title="Błąd"/>}
+                }
+            </MudTd>
+            <MudTd DataLabel="Ilość">@context.Amount</MudTd>
+            <MudTd DataLabel="Cena">@context.Price</MudTd>
+            <MudTd DataLabel="DataRozpoczęcia">@context.CreateDate</MudTd>
+            <MudTd DataLabel="DataZakończenia">
+                @if(context.CompletionDate != DateTime.MinValue)
+                {
+                    @context.CompletionDate
+                }
+                else 
+                {
+                    <MudIcon Icon="@Icons.Material.Filled.HorizontalRule" Title="Nie ukończone"/>
+                }
+            </MudTd>
+            <MudTd DataLabel="CzyUkończono">@context.Finished</MudTd>
+            <MudTd DataLabel="Options">
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" IconSize="Size.Medium" OnClick="@( () => EditOrder(context) )"/>
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" IconSize="Size.Medium" OnClick="@( () => DeleteOrder(context) )"/>
+                @{
+                    @if(!context.Finished)
+                    {
+                        <MudIconButton Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Tertiary" IconSize="Size.Medium" OnClick="@( () => FinishOrder(context) )"/>
+                    }
+                }
+            </MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager InfoFormat="{first_item}-{last_item} z {all_items}" RowsPerPageString="Wierszy na stronę:"></MudTablePager>
+        </PagerContent>
+    </MudTable>
+</MudPaper>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
-@code {
-    private int currentCount = 0;
+@code
+{
+    private List<OrderViewModel> orders = new List<OrderViewModel>();
+    private List<ClientViewModel> clients = new List<ClientViewModel>();
+    private List<ProductViewModel> products = new List<ProductViewModel>();
 
-    private void IncrementCount()
+    protected override async Task OnInitializedAsync()
     {
-        currentCount++;
+        await base.OnInitializedAsync();
+        RefreshProductsList();
+
+    }
+
+    private async Task RefreshProductsList()
+    {
+        await LoadUsersAndProducts();
+        try
+        {
+            orders = await httpClient.GetFromJsonAsync<List<OrderViewModel>>("/api/order");
+            StateHasChanged();
+        }
+        catch (HttpRequestException ex)
+        {   
+            Console.WriteLine("-------------------------------------------------");
+            Console.WriteLine("Wystąpił błąd podczas pobierania listy zamówień: " + ex.Message);
+            Console.WriteLine("-------------------------------------------------");
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine("-------------------------------------------------");
+            Console.WriteLine("Wystąpił błąd: " + e.Message);
+            Console.WriteLine("-------------------------------------------------");
+        }
+    }
+
+    private void DeleteOrder(OrderViewModel model)
+    {
+        var parameters = new DialogParameters();
+        parameters[nameof(UI.Components.Dialogs.OrderDialogs.DeleteOrderDialog.ProductId)] = model.Id;
+        parameters["OnSuccess"] = new Func<Task>(RefreshProductsList);
+
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        DialogService.Show<UI.Components.Dialogs.OrderDialogs.DeleteOrderDialog>("Usuwanie zamówienia", parameters, options);
+    }
+
+    private void EditOrder(OrderViewModel model)
+    {    
+        var parameters = new DialogParameters();
+        parameters[nameof(UI.Components.Dialogs.OrderDialogs.EditOrderDialog.OrderId)] = model.Id;
+        parameters[nameof(UI.Components.Dialogs.OrderDialogs.EditOrderDialog.OrderId_Product)] = model.Id_Product;
+        parameters[nameof(UI.Components.Dialogs.OrderDialogs.EditOrderDialog.OrderId_User)] = model.Id_User;
+        parameters[nameof(UI.Components.Dialogs.OrderDialogs.EditOrderDialog.OrderAmount)] = model.Amount;
+        parameters[nameof(UI.Components.Dialogs.OrderDialogs.EditOrderDialog.OrderPrice)] = model.Price;
+        parameters[nameof(UI.Components.Dialogs.OrderDialogs.EditOrderDialog.OrderCreateDate)] = model.CreateDate;
+        parameters[nameof(UI.Components.Dialogs.OrderDialogs.EditOrderDialog.OrderCompletionDate)] = model.CompletionDate;
+        parameters[nameof(UI.Components.Dialogs.OrderDialogs.EditOrderDialog.OrderFinished)] = model.Finished;
+        parameters[nameof(UI.Components.Dialogs.OrderDialogs.EditOrderDialog.ClientList)] = clients;
+        parameters[nameof(UI.Components.Dialogs.OrderDialogs.EditOrderDialog.ProductList)] = products;
+        parameters["OnSuccess"] = new Func<Task>(RefreshProductsList);
+
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        DialogService.Show<UI.Components.Dialogs.OrderDialogs.EditOrderDialog>("Edycja zamówienia", parameters, options);
+    }
+
+    private void AddOrder()
+    {
+        var parameters = new DialogParameters();
+        parameters["OnSuccess"] = new Func<Task>(RefreshProductsList);
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        DialogService.Show<UI.Components.Dialogs.OrderDialogs.AddOrderDialog>("Dodawanie nowego zamówienia", parameters, options);
+    }
+    private void FinishOrder(OrderViewModel model)
+    {
+        var parameters = new DialogParameters();
+        parameters[nameof(UI.Components.Dialogs.OrderDialogs.FinishOrderDialog.OrderId)] = model.Id;
+        parameters["OnSuccess"] = new Func<Task>(RefreshProductsList);
+        
+        DialogService.Show<UI.Components.Dialogs.OrderDialogs.FinishOrderDialog>("Zakończenie zamówienia");
+    }
+    private async Task LoadUsersAndProducts()
+    {
+        clients = await httpClient.GetFromJsonAsync<List<ClientViewModel>>("/api/client");
+        products = await httpClient.GetFromJsonAsync<List<ProductViewModel>>("/api/product");
     }
 }
