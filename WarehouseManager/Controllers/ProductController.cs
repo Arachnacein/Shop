@@ -127,5 +127,24 @@ namespace WarehouseManager.Controllers
                 return Conflict(e.Message);
             }
         }
+
+        [HttpGet("Check")]
+        public IActionResult Check([FromQuery]int productId, [FromQuery]int productAmount)
+        {
+            try{
+                var result = _warehouseService.Check(productId, productAmount);
+                if(result)
+                    return Ok(true);
+                else return Ok(false);
+            }
+            catch(ProductNotFoundException e)
+            {
+                return Conflict(e.Message);
+            }
+            catch(Exception e)
+            {
+                return Conflict(e.Message);
+            }
+        }
     }
 }

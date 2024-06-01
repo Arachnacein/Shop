@@ -4,6 +4,7 @@
 @using UI.Enums;
 @using UI.Extensions;
 @using System;
+
 <MudDialog>
     <DialogContent>
         <MudSelect @bind-Value="client" Label="Klient" AdornmentColor="Color.Secondary">
@@ -43,7 +44,7 @@
         DialogModel.Id_User = Guid.Empty;;
         DialogModel.Id_Product = Int32.MinValue;
         DialogModel.Amount = 0;
-        DialogModel.Price = 2.2M;
+        DialogModel.Price = 0.0M;
         DialogModel.CreateDate = DateTime.Now;
         DialogModel.CompletionDate = DateTime.MinValue;
         DialogModel.Finished = false;
@@ -53,6 +54,42 @@
 
     private async Task Submit()
     {
+        if(client == null)
+        {
+            Snackbar.Add($"Musisz wybrać klienta", Severity.Warning);
+            return;
+        }
+        if(product == null)
+        {
+            Snackbar.Add($"Musisz wybrac produkt", Severity.Warning);
+            return;
+        }
+        if(DialogModel.Amount == 0)
+        {
+            Snackbar.Add($"Wpisz ilość", Severity.Warning);
+            return;
+        }
+        if(DialogModel.Amount < 0)
+        {
+            Snackbar.Add($"Ilośc musi być większa niż 0", Severity.Warning);
+            return;
+        }
+        if(DialogModel.Price == 0)
+        {
+            Snackbar.Add($"Wpisz cenę", Severity.Warning);
+            return;
+        }
+        if(DialogModel.Price < 0)
+        {
+            Snackbar.Add($"Cena musi być większa niż 0", Severity.Warning);
+            return;
+        }
+        var checkAmount = await CheckWarehouse(product.Id, DialogModel.Amount);
+        if(!checkAmount)
+        {
+            Snackbar.Add($"Niewystarczająca ilość produktów w magazynie", Severity.Warning);
+            return;
+        }
         var result = await httpClient.PostAsJsonAsync($"/api/order", new
         {
                 Id_User = client.Id,
@@ -82,5 +119,12 @@
     private async Task LoadProducts()
     {
         products = await httpClient.GetFromJsonAsync<List<ProductNameViewModel>>("/api/product");
+    }
+    private async Task<bool> CheckWarehouse(int productId, int productAmount)
+    {
+        var response = await httpClient.GetFromJsonAsync<bool>($"/api/product/Check?productId={productId}&productAmount={productAmount}");
+        if (response == true)
+            return true;
+        else return false;
     }
 }

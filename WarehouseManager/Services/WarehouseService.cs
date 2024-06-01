@@ -94,5 +94,15 @@ namespace WarehouseManager.Services
             _warehouseRepository.DeleteProduct(id);
         }
         public int CountProducts() => _warehouseRepository.GetProducts().Count();
+        public bool Check(int productId, int productAmount)
+        {
+            var product = _warehouseRepository.GetProduct(productId);
+            if(product == null)
+                throw new ProductNotFoundException($"Product not found id:{productId}");
+
+            if(productAmount <= product.Amount)
+                return true;
+            else return false;
+        }
     }
 }
