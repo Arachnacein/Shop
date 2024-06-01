@@ -20,6 +20,7 @@
             <MudTh><MudTableSortLabel SortBy="new Func<OrderViewModel, object>(x=>x.Id_Product)">Produkt</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<OrderViewModel, object>(x=>x.Amount)">Ilość</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<OrderViewModel, object>(x=>x.Price)">Cena</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<OrderViewModel, object>(x=>x.Price * x.Amount)">Łącznie</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<OrderViewModel, object>(x=>x.CreateDate)">Data utworzenia</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<OrderViewModel, object>(x=>x.CompletionDate)">Data ukończenia</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<OrderViewModel, object>(x=>x.Finished)">Zamknięte?</MudTableSortLabel></MudTh>
@@ -43,7 +44,12 @@
                 }
             </MudTd>
             <MudTd DataLabel="Ilość">@context.Amount</MudTd>
-            <MudTd DataLabel="Cena">@context.Price</MudTd>
+            <MudTd DataLabel="Cena">@context.Price zł</MudTd>
+            <MudTd DataLabel="Łącznie">
+                @{
+                    var total = context.Price * context.Amount;
+                    @total;
+                } zł</MudTd>
             <MudTd DataLabel="DataRozpoczęcia">@context.CreateDate</MudTd>
             <MudTd DataLabel="DataZakończenia">
                 @if(context.CompletionDate != DateTime.MinValue)
@@ -150,8 +156,9 @@
         var parameters = new DialogParameters();
         parameters[nameof(UI.Components.Dialogs.OrderDialogs.FinishOrderDialog.OrderId)] = model.Id;
         parameters["OnSuccess"] = new Func<Task>(RefreshProductsList);
-        
-        DialogService.Show<UI.Components.Dialogs.OrderDialogs.FinishOrderDialog>("Zakończenie zamówienia");
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        DialogService.Show<UI.Components.Dialogs.OrderDialogs.FinishOrderDialog>("Zakończenie zamówienia", parameters, options);
     }
     private async Task LoadUsersAndProducts()
     {

@@ -53,6 +53,15 @@ namespace OrderManager.Services
             mappedOrder.CreateDate = existingOrder.CreateDate;
             _repository.Update(mappedOrder);
         }
+        public void FinishOrder(int id)
+        {
+            var order = _repository.GetById(id);
+            if(order == null)
+                throw new OrderNotFoundException($"Order not found id:{id}");
+            order.Finished = true;
+            order.CompletionDate = DateTime.Now;
+            _repository.Update(order);
+        }
         public void DeleteOrder(int id)
         {
             var existingOrder = _repository.GetById(id);

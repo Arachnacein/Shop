@@ -6,7 +6,6 @@
 @using System;
 <MudDialog>
     <DialogContent>
-        Dodawanie nowego zamówienia
         <MudSelect @bind-Value="client" Label="Klient" AdornmentColor="Color.Secondary">
             @foreach(var i in clients)
             {
@@ -19,8 +18,8 @@
                 <MudSelectItem Value="@i">@i.Name</MudSelectItem>
             }
         </MudSelect>
-        <MudTextField T="int" Label="Amount" @bind-Value="DialogModel.Amount" />
-        <MudTextField T="decimal" Label="Price" @bind-Value="DialogModel.Price" />
+        <MudTextField T="int" Label="Ilość" @bind-Value="DialogModel.Amount" />
+        <MudTextField T="decimal" Label="Cena" @bind-Value="DialogModel.Price" />
     </DialogContent>
     <DialogActions>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit">Dodaj</MudButton>

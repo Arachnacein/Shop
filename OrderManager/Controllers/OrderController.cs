@@ -85,6 +85,23 @@ public class OrderController : ControllerBase
         }
     }
 
+    [HttpPut("FinishOrder/{id}")]
+    public IActionResult FinishOrder(int id)
+    {
+        try{
+            _orderService.FinishOrder(id);
+            return NoContent();
+        }
+        catch(OrderNotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+        catch(Exception e)
+        {
+            return Conflict(e.Message);
+        } 
+    }
+
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {

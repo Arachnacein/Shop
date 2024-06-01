@@ -70,6 +70,16 @@
                 "Port": 8080
             }],
             "DownstreamPathTemplate": "/api/order/{id}"
+        },
+        {
+            "UpstreamPathTemplate": "/api/order/FinishOrder/{id}",
+            "UpstreamHttpMethod": ["Put"],
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [{
+                "Host": "orderapi",
+                "Port": 8080
+            }],
+            "DownstreamPathTemplate": "/api/order/FinishOrder/{id}"
         }
     ],
     "GlobalConfiguration":{

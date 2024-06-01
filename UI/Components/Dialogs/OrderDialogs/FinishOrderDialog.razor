@@ -28,10 +28,10 @@
 
     private async Task Submit()
     {
-            var result = await httpClient.PutAsJsonAsync<FinishOrder>($"/api/order");
+            var result = await httpClient.PutAsJsonAsync($"/api/order/FinishOrder/{OrderId}", OrderId);
             if(result.StatusCode == HttpStatusCode.NoContent)
             {
-                Snackbar.Add("Pomyślnie edytowano produkt.", Severity.Info);
+                Snackbar.Add("Pomyślnie zakończono zamówienie.", Severity.Info);
                 MudDialog.Cancel();
                 if(OnSuccess != null)
                     await OnSuccess.Invoke();

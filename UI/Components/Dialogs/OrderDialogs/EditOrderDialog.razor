@@ -6,24 +6,23 @@
 
 <MudDialog>
     <DialogContent>
-        <p>Edycja zamówienia__</p>
         <MudSelect @bind-Value="product" Label="Produkt" AdornmentColor="Color.Secondary">
             @foreach(var i in ProductList)
             {
                 <MudSelectItem Value="@i">@i.Name</MudSelectItem>
             }
         </MudSelect>
-        <MudTextField Label="Amount" @bind-Value="DialogModel.Amount" />
-        <MudTextField Label="Price" @bind-Value="DialogModel.Price" />
-        <MudTextField Label="CreateDate" @bind-Value="DialogModel.CreateDate" />
+        <MudTextField Label="Ilość" @bind-Value="DialogModel.Amount" />
+        <MudTextField Label="Cena" @bind-Value="DialogModel.Price" />
+        <MudTextField Label="Data utworzenia" @bind-Value="DialogModel.CreateDate" />
         @{
             @if(DialogModel.CompletionDate != DateTime.MinValue)
             {
-                <MudTextField Label="CompletionDate" @bind-Value="DialogModel.CompletionDate" />
+                <MudTextField Label="Data zakończenia" @bind-Value="DialogModel.CompletionDate" />
             }
             else
             {
-                <MudTextField Label="CompletionDate" @bind-Value="DialogModel.CompletionDate" Disabled="true"/>
+                <MudTextField Label="Data zakończenia" @bind-Value="DialogModel.CompletionDate" Disabled="true"/>
             }
         }
         Zakończone: <MudCheckBox @bind-Value="DialogModel.Finished" Disabled=true />
