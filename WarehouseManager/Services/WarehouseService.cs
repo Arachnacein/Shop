@@ -79,11 +79,8 @@ namespace WarehouseManager.Services
             var existingProduct = _warehouseRepository.GetProduct(dto.Id);
             if(existingProduct == null)
                 throw new ProductNotFoundException($"Product not found! ID:{dto.Id}");
-            if(dto.Amount < 0)
-                throw new BadValueException($"Parameter amount has incorrect value = {dto.Amount} should be greater than zero.");
-            
-            //var mappedProduct = _mapper.Map<Product>(dto);
-            existingProduct.Amount = dto.Amount;
+
+            existingProduct.Amount += dto.Amount;
             _warehouseRepository.UpdateProduct(existingProduct); 
         }
         public void DeleteProduct(int id)

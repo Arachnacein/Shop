@@ -90,7 +90,7 @@
             Snackbar.Add($"Niewystarczająca ilość produktów w magazynie", Severity.Warning);
             return;
         }
-        var result = await httpClient.PostAsJsonAsync($"/api/order", new
+        var resultAddOrder = await httpClient.PostAsJsonAsync($"/api/order", new
         {
                 Id_User = client.Id,
                 Id_Product = product.Id,
@@ -100,7 +100,14 @@
                 CompletionDate = DialogModel.CompletionDate,
                 Finished = DialogModel.Finished
         });
-        if(result.StatusCode == HttpStatusCode.Created)
+
+        var resultDecreaseProductAmount = await httpClient.PutAsJsonAsync($"/api/product/UpdateAmount", new
+        {
+            Id = product.Id,
+            Amount = -(DialogModel.Amount)
+        });
+
+        if(resultAddOrder.StatusCode == HttpStatusCode.Created && resultDecreaseProductAmount.StatusCode == HttpStatusCode.NoContent)
         {
             Snackbar.Add("Pomyślnie dodano zamówienie.", Severity.Info);
             MudDialog.Cancel();

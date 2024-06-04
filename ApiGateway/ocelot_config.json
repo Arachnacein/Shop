@@ -59,6 +59,16 @@
             }],
             "DownstreamPathTemplate": "/api/product/Check?productId={productId}&productAmount={productAmount}"
         },
+        {
+            "UpstreamPathTemplate": "/api/product/UpdateAmount",
+            "UpstreamHttpMethod": ["Put"],
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [{
+                "Host": "warehouseapi",
+                "Port": 8080
+            }],
+            "DownstreamPathTemplate": "/api/product/UpdateAmount"
+        },
 
         // Order WebAPI
         {

@@ -82,7 +82,7 @@ namespace WarehouseManager.Controllers
         }
 
         [HttpPut("UpdatePrice")]
-        public IActionResult Update(UpdateProductPriceDto dto)
+        public IActionResult UpdatePrice(UpdateProductPriceDto dto)
         {
             try{
                 _warehouseService.UpdateProductPrice(dto);
@@ -99,7 +99,7 @@ namespace WarehouseManager.Controllers
         }
 
         [HttpPut("UpdateAmount")]
-        public IActionResult Update(UpdateProductAmountDto dto)
+        public IActionResult UpdateAmount(UpdateProductAmountDto dto)
         {
             try{
                 _warehouseService.UpdateProductAmount(dto);
@@ -107,11 +107,11 @@ namespace WarehouseManager.Controllers
             }
             catch(ProductNotFoundException e)
             {
-                return NotFound(e.Message);
+                return NotFound(new { message = e.Message });
             }
             catch(Exception e)
             {
-                return Conflict(e);
+                return Conflict(new { message = e.Message });
             } 
         }
         
