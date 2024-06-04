@@ -51,6 +51,23 @@ namespace WarehouseManager.Controllers
             } 
         }
 
+        [HttpGet("GetPrice/{id}")]
+        public IActionResult GetPrice(int id)
+        {
+            try{
+                var productPrice = _warehouseService.GetProductPrice(id);
+                return Ok(productPrice);
+            }
+            catch(ProductNotFoundException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch(Exception e)
+            {
+                return Conflict(e);
+            } 
+        }
+
         [HttpPost]
         public IActionResult Create(CreateProductDto dto)
         {
@@ -82,7 +99,7 @@ namespace WarehouseManager.Controllers
         }
 
         [HttpPut("UpdatePrice")]
-        public IActionResult Update(UpdateProductPriceDto dto)
+        public IActionResult UpdatePrice(UpdateProductPriceDto dto)
         {
             try{
                 _warehouseService.UpdateProductPrice(dto);
@@ -99,7 +116,7 @@ namespace WarehouseManager.Controllers
         }
 
         [HttpPut("UpdateAmount")]
-        public IActionResult Update(UpdateProductAmountDto dto)
+        public IActionResult UpdateAmount(UpdateProductAmountDto dto)
         {
             try{
                 _warehouseService.UpdateProductAmount(dto);
@@ -107,11 +124,11 @@ namespace WarehouseManager.Controllers
             }
             catch(ProductNotFoundException e)
             {
-                return NotFound(e.Message);
+                return NotFound(new { message = e.Message });
             }
             catch(Exception e)
             {
-                return Conflict(e);
+                return Conflict(new { message = e.Message });
             } 
         }
         
@@ -121,6 +138,25 @@ namespace WarehouseManager.Controllers
             try{
                 _warehouseService.DeleteProduct(id);
                 return NoContent();
+            }
+            catch(Exception e)
+            {
+                return Conflict(e.Message);
+            }
+        }
+
+        [HttpGet("Check")]
+        public IActionResult Check([FromQuery]int productId, [FromQuery]int productAmount)
+        {
+            try{
+                var result = _warehouseService.Check(productId, productAmount);
+                if(result)
+                    return Ok(true);
+                else return Ok(false);
+            }
+            catch(ProductNotFoundException e)
+            {
+                return Conflict(e.Message);
             }
             catch(Exception e)
             {

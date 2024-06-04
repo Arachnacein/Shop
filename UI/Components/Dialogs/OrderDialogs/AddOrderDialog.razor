@@ -1,0 +1,128 @@
+@inject HttpClient httpClient
+@using System.Net
+@using System.Collections.Generic
+@using UI.Enums;
+@using UI.Extensions;
+@using System;
+
+<MudDialog>
+    <DialogContent>
+        <MudSelect @bind-Value="client" Label="Klient" AdornmentColor="Color.Secondary">
+            @foreach(var i in clients)
+            {
+                <MudSelectItem Value="@i">@i.Name @i.Surname</MudSelectItem>
+            }
+        </MudSelect>
+        <MudSelect @bind-Value="product" Label="Produkt" AdornmentColor="Color.Secondary">
+            @foreach(var i in products)
+            {
+                <MudSelectItem Value="@i">@i.Name</MudSelectItem>
+            }
+        </MudSelect>
+        <MudTextField T="int" Label="Ilość" @bind-Value="DialogModel.Amount" />
+        @* <MudTextField T="decimal" Label="Cena" @bind-Value="DialogModel.Price" /> *@
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit">Dodaj</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="Cancel">Anuluj</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Inject] private ISnackbar Snackbar { get; set; }
+    [Parameter] public Func<Task> OnSuccess { get; set; }
+    private OrderViewModel DialogModel = new OrderViewModel();
+    private List<ClientNameViewModel> clients = new List<ClientNameViewModel>();
+    private List<ProductNameViewModel> products = new List<ProductNameViewModel>();
+    private ClientNameViewModel client;
+    private ProductNameViewModel product;
+
+
+    protected override void OnInitialized()
+    {
+        DialogModel.Id_User = Guid.Empty;;
+        DialogModel.Id_Product = Int32.MinValue;
+        DialogModel.Amount = 0;
+        DialogModel.Price = 0.0M;
+        DialogModel.CreateDate = DateTime.Now;
+        DialogModel.CompletionDate = DateTime.MinValue;
+        DialogModel.Finished = false;
+        LoadProducts();
+        LoadUsers();
+    }
+
+    private async Task Submit()
+    {
+        if(client == null)
+        {
+            Snackbar.Add($"Musisz wybrać klienta", Severity.Warning);
+            return;
+        }
+        if(product == null)
+        {
+            Snackbar.Add($"Musisz wybrac produkt", Severity.Warning);
+            return;
+        }
+        if(DialogModel.Amount == 0)
+        {
+            Snackbar.Add($"Wpisz ilość", Severity.Warning);
+            return;
+        }
+        if(DialogModel.Amount < 0)
+        {
+            Snackbar.Add($"Ilośc musi być większa niż 0", Severity.Warning);
+            return;
+        }
+        var checkAmount = await CheckWarehouse(product.Id, DialogModel.Amount);
+        if(!checkAmount)
+        {
+            Snackbar.Add($"Niewystarczająca ilość produktów w magazynie", Severity.Warning);
+            return;
+        }
+        var currentPrice = await httpClient.GetFromJsonAsync<decimal>($"/api/product/GetPrice/{product.Id}");
+        var resultAddOrder = await httpClient.PostAsJsonAsync($"/api/order", new
+        {
+                Id_User = client.Id,
+                Id_Product = product.Id,
+                Amount = DialogModel.Amount,
+                Price = currentPrice,
+                CreateDate = DialogModel.CreateDate,
+                CompletionDate = DialogModel.CompletionDate,
+                Finished = DialogModel.Finished
+        });
+
+        var resultDecreaseProductAmount = await httpClient.PutAsJsonAsync($"/api/product/UpdateAmount", new
+        {
+            Id = product.Id,
+            Amount = -(DialogModel.Amount)
+        });
+
+        if(resultAddOrder.StatusCode == HttpStatusCode.Created && resultDecreaseProductAmount.StatusCode == HttpStatusCode.NoContent)
+        {
+            Snackbar.Add("Pomyślnie dodano zamówienie.", Severity.Info);
+            MudDialog.Cancel();
+            if(OnSuccess != null)
+                await OnSuccess.Invoke();
+        }
+        else
+            Snackbar.Add($"Coś poszło nie tak.", Severity.Warning);
+    }
+    void Cancel() => MudDialog.Cancel();
+
+    private async Task LoadUsers()
+    {
+        clients = await httpClient.GetFromJsonAsync<List<ClientNameViewModel>>("/api/client");
+    }
+    private async Task LoadProducts()
+    {
+        products = await httpClient.GetFromJsonAsync<List<ProductNameViewModel>>("/api/product");
+    }
+    private async Task<bool> CheckWarehouse(int productId, int productAmount)
+    {
+        var response = await httpClient.GetFromJsonAsync<bool>($"/api/product/Check?productId={productId}&productAmount={productAmount}");
+        if (response == true)
+            return true;
+        else return false;
+    }
+}

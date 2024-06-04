@@ -8,6 +8,7 @@ namespace OrderManager.Services
         OrderDto GetOrderById(int id);
         OrderDto CreateOrder(CreateOrderDto dto);
         void UpdateOrder(UpdateOrderDto dto);
+        void FinishOrder(int id);
         void DeleteOrder(int id);
 
     }

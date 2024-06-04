@@ -1,0 +1,122 @@
+@inject HttpClient httpClient
+@using System.Net
+@using System.Collections.Generic
+@using UI.Enums;
+@using UI.Extensions;
+
+<MudDialog>
+    <DialogContent>
+        <MudSelect @bind-Value="product" Label="Produkt" AdornmentColor="Color.Secondary">
+            @foreach(var i in ProductList)
+            {
+                <MudSelectItem Value="@i">@i.Name</MudSelectItem>
+            }
+        </MudSelect>
+        <MudTextField Label="Ilość" @bind-Value="DialogModel.Amount" />
+        <MudTextField Label="Cena" @bind-Value="DialogModel.Price" />
+        <MudTextField Label="Data utworzenia" @bind-Value="DialogModel.CreateDate" />
+        @{
+            @if(DialogModel.CompletionDate != DateTime.MinValue)
+            {
+                <MudTextField Label="Data zakończenia" @bind-Value="DialogModel.CompletionDate" />
+            }
+            else
+            {
+                <MudTextField Label="Data zakończenia" @bind-Value="DialogModel.CompletionDate" Disabled="true"/>
+            }
+        }
+        Zakończone: <MudCheckBox @bind-Value="DialogModel.Finished" Disabled=true />
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit">Potwierdź</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="Cancel">Anuluj</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Inject] private ISnackbar Snackbar { get; set; }
+    private OrderViewModel DialogModel { get; set; }
+
+    [Parameter] public int OrderId { get; set; }
+    [Parameter] public int OrderId_Product { get; set; }
+    [Parameter] public Guid OrderId_User { get; set; }
+    [Parameter] public int OrderAmount { get; set; }
+    [Parameter] public decimal OrderPrice { get; set; }
+    [Parameter] public DateTime OrderCreateDate { get; set; }
+    [Parameter] public DateTime OrderCompletionDate { get; set; }
+    [Parameter] public bool OrderFinished { get; set; }
+    [Parameter] public List<ClientViewModel> ClientList {get; set;}
+    [Parameter] public List<ProductViewModel> ProductList {get; set;}
+    [Parameter] public Func<Task> OnSuccess { get; set; }
+
+    private ClientViewModel client;
+    private ProductViewModel product;
+    
+    protected override void OnInitialized()
+    {
+        var client = ClientList.FirstOrDefault(x => x.Id == OrderId_User);
+        if(client == null)
+            Snackbar.Add("Błąd pobierania klienta", Severity.Warning);
+        var product = ProductList.FirstOrDefault(x => x.Id == OrderId_Product);
+        if(product == null)
+            Snackbar.Add("Błąd pobierania produktu", Severity.Warning);
+
+        DialogModel = new OrderViewModel()
+        {
+            Id = OrderId,
+            Id_Product = product.Id,
+            Id_User = client.Id,
+            Amount = OrderAmount,
+            Price = OrderPrice,
+            CreateDate = OrderCreateDate,
+            CompletionDate = OrderCompletionDate,
+            Finished = OrderFinished
+        };
+        StateHasChanged();
+    }
+
+    private async Task Submit()
+    {
+        if(Validate())
+        {
+            @* var pickedUser = DialogModel.
+            var result = await httpClient.PutAsJsonAsync($"/api/order", new
+            {
+                Id = DialogModel.Id,
+                Id_Product = DialogModel.Id_Product,
+                Id_User = DialogModel.Id_User,
+                Amount = DialogModel.Amount,
+                Price = DialogModel.Price,
+                CreateDate = DialogModel.CreateDate,
+                CompletionDate = DialogModel.CompletionDate,
+                Finished = DialogModel.Finished
+            });
+            if(result.StatusCode == HttpStatusCode.NoContent)
+            {
+                Snackbar.Add("Pomyślnie edytowano produkt.", Severity.Info);
+                MudDialog.Cancel();
+                if(OnSuccess != null)
+                    await OnSuccess.Invoke();
+            }
+            else
+                Snackbar.Add($"Coś poszło nie tak.", Severity.Warning); *@
+        }
+    }
+    void Cancel() => MudDialog.Cancel();
+
+    private bool Validate()
+    {
+        if(DialogModel.Price < 0.0M) 
+        {
+            Snackbar.Add($"Cena nie może być mniejsza niż 0!", Severity.Warning);
+            return false;
+        }
+        if(DialogModel.Amount < 0)
+        {
+            Snackbar.Add($"Ilość nie może być mniejsza niż 0!", Severity.Warning);
+            return false;
+        }
+        return true;
+    }
+}

@@ -79,11 +79,8 @@ namespace WarehouseManager.Services
             var existingProduct = _warehouseRepository.GetProduct(dto.Id);
             if(existingProduct == null)
                 throw new ProductNotFoundException($"Product not found! ID:{dto.Id}");
-            if(dto.Amount < 0)
-                throw new BadValueException($"Parameter amount has incorrect value = {dto.Amount} should be greater than zero.");
-            
-            //var mappedProduct = _mapper.Map<Product>(dto);
-            existingProduct.Amount = dto.Amount;
+
+            existingProduct.Amount += dto.Amount;
             _warehouseRepository.UpdateProduct(existingProduct); 
         }
         public void DeleteProduct(int id)
@@ -94,5 +91,22 @@ namespace WarehouseManager.Services
             _warehouseRepository.DeleteProduct(id);
         }
         public int CountProducts() => _warehouseRepository.GetProducts().Count();
+        public bool Check(int productId, int productAmount)
+        {
+            var product = _warehouseRepository.GetProduct(productId);
+            if(product == null)
+                throw new ProductNotFoundException($"Product not found id:{productId}");
+
+            if(productAmount <= product.Amount)
+                return true;
+            else return false;
+        }
+        public decimal GetProductPrice(int productId)
+        {
+            var product = _warehouseRepository.GetProduct(productId);
+            if(product == null)
+                throw new ProductNotFoundException($"Product not found id:{productId}");
+            return product.Price;
+        }
     }
 }

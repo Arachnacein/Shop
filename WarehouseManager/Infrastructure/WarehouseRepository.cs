@@ -34,7 +34,7 @@ namespace WarehouseManager.Infrastructure
             var productExists = _context.Products.FirstOrDefault(x => x.Id == product.Id);
             if(productExists == null)
                 throw new ProductNotFoundException($"Product not found. Id: {product.Id}");
-            productExists.Amount = amountToAdd;
+            productExists.Amount += amountToAdd;
             _context.Products.Update(productExists);
             _context.SaveChanges();
         }

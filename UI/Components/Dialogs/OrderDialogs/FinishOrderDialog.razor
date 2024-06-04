@@ -1,0 +1,43 @@
+@inject HttpClient httpClient
+@using System.Net
+@using System.Collections.Generic
+@using UI.Enums;
+@using UI.Extensions;
+
+<MudDialog>
+    <DialogContent>
+      <p>Czy na pewno chcesz ukończyć to zamówienie?</p>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit">Potwierdź</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="Cancel">Anuluj</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Inject] private ISnackbar Snackbar { get; set; }
+    private OrderViewModel DialogModel { get; set; }
+
+    [Parameter] public int OrderId { get; set; }
+    [Parameter] public Func<Task> OnSuccess { get; set; }
+    
+    protected override void OnInitialized()
+    {
+    }
+
+    private async Task Submit()
+    {
+            var result = await httpClient.PutAsJsonAsync($"/api/order/FinishOrder/{OrderId}", OrderId);
+            if(result.StatusCode == HttpStatusCode.NoContent)
+            {
+                Snackbar.Add("Pomyślnie zakończono zamówienie.", Severity.Info);
+                MudDialog.Cancel();
+                if(OnSuccess != null)
+                    await OnSuccess.Invoke();
+            }
+            else
+                Snackbar.Add($"Coś poszło nie tak.", Severity.Warning);
+    }
+    void Cancel() => MudDialog.Cancel();
+}

@@ -49,7 +49,36 @@
             }],
             "DownstreamPathTemplate": "/api/product/{id}"
         },
-
+        {
+            "UpstreamPathTemplate": "/api/product/Check?productId={productId}&productAmount={productAmount}",
+            "UpstreamHttpMethod": ["Get"],
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [{
+                "Host": "warehouseapi",
+                "Port": 8080
+            }],
+            "DownstreamPathTemplate": "/api/product/Check?productId={productId}&productAmount={productAmount}"
+        },
+        {
+            "UpstreamPathTemplate": "/api/product/UpdateAmount",
+            "UpstreamHttpMethod": ["Put"],
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [{
+                "Host": "warehouseapi",
+                "Port": 8080
+            }],
+            "DownstreamPathTemplate": "/api/product/UpdateAmount"
+        },
+        {
+            "UpstreamPathTemplate": "/api/product/GetPrice/{id}",
+            "UpstreamHttpMethod": ["Get"],
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [{
+                "Host": "warehouseapi",
+                "Port": 8080
+            }],
+            "DownstreamPathTemplate": "/api/product/GetPrice/{id}"
+        },
         // Order WebAPI
         {
             "UpstreamPathTemplate": "/api/order",
@@ -70,6 +99,16 @@
                 "Port": 8080
             }],
             "DownstreamPathTemplate": "/api/order/{id}"
+        },
+        {
+            "UpstreamPathTemplate": "/api/order/FinishOrder/{id}",
+            "UpstreamHttpMethod": ["Put"],
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [{
+                "Host": "orderapi",
+                "Port": 8080
+            }],
+            "DownstreamPathTemplate": "/api/order/FinishOrder/{id}"
         }
     ],
     "GlobalConfiguration":{
