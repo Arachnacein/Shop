@@ -51,6 +51,23 @@ namespace WarehouseManager.Controllers
             } 
         }
 
+        [HttpGet("GetPrice/{id}")]
+        public IActionResult GetPrice(int id)
+        {
+            try{
+                var productPrice = _warehouseService.GetProductPrice(id);
+                return Ok(productPrice);
+            }
+            catch(ProductNotFoundException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch(Exception e)
+            {
+                return Conflict(e);
+            } 
+        }
+
         [HttpPost]
         public IActionResult Create(CreateProductDto dto)
         {

@@ -101,5 +101,12 @@ namespace WarehouseManager.Services
                 return true;
             else return false;
         }
+        public decimal GetProductPrice(int productId)
+        {
+            var product = _warehouseRepository.GetProduct(productId);
+            if(product == null)
+                throw new ProductNotFoundException($"Product not found id:{productId}");
+            return product.Price;
+        }
     }
 }

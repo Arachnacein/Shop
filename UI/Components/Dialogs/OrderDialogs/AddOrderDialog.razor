@@ -20,7 +20,7 @@
             }
         </MudSelect>
         <MudTextField T="int" Label="Ilość" @bind-Value="DialogModel.Amount" />
-        <MudTextField T="decimal" Label="Cena" @bind-Value="DialogModel.Price" />
+        @* <MudTextField T="decimal" Label="Cena" @bind-Value="DialogModel.Price" /> *@
     </DialogContent>
     <DialogActions>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit">Dodaj</MudButton>
@@ -74,28 +74,19 @@
             Snackbar.Add($"Ilośc musi być większa niż 0", Severity.Warning);
             return;
         }
-        if(DialogModel.Price == 0)
-        {
-            Snackbar.Add($"Wpisz cenę", Severity.Warning);
-            return;
-        }
-        if(DialogModel.Price < 0)
-        {
-            Snackbar.Add($"Cena musi być większa niż 0", Severity.Warning);
-            return;
-        }
         var checkAmount = await CheckWarehouse(product.Id, DialogModel.Amount);
         if(!checkAmount)
         {
             Snackbar.Add($"Niewystarczająca ilość produktów w magazynie", Severity.Warning);
             return;
         }
+        var currentPrice = await httpClient.GetFromJsonAsync<decimal>($"/api/product/GetPrice/{product.Id}");
         var resultAddOrder = await httpClient.PostAsJsonAsync($"/api/order", new
         {
                 Id_User = client.Id,
                 Id_Product = product.Id,
                 Amount = DialogModel.Amount,
-                Price = DialogModel.Price,
+                Price = currentPrice,
                 CreateDate = DialogModel.CreateDate,
                 CompletionDate = DialogModel.CompletionDate,
                 Finished = DialogModel.Finished

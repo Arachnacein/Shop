@@ -14,5 +14,6 @@ namespace WarehouseManager.Services
         void DeleteProduct(int id);
         int CountProducts();
         bool Check(int productId, int productAmount);
+        decimal GetProductPrice(int productId);
     }
 }
