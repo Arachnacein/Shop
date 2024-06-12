@@ -7,7 +7,7 @@ using ClientManager.Models;
 
 namespace ClientManagerTests
 {
-    public class ClientDbContextUnitTests
+    public class ClientDbContextTests
     {
         private ClientDbContext GetInMemoryDbContext()
         {

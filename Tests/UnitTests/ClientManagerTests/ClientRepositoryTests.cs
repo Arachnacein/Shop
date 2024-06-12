@@ -21,7 +21,8 @@ namespace ClientManagerTests
             using (var context = new ClientDbContext(_options))
             {
                 context.Clients.Add(new Client { Id = Guid.NewGuid(), Name = "Client1", Surname = "Surname1", RegistryDate = DateTime.Now });
-                context.Clients.Add(new Client { Id = Guid.NewGuid(), Name = "Client2", Surname = "Surname2", RegistryDate = DateTime.Now });
+                context.Clients
+                .Add(new Client { Id = Guid.NewGuid(), Name = "Client2", Surname = "Surname2", RegistryDate = DateTime.Now });
                 context.SaveChanges();
             }
         }

@@ -43,6 +43,7 @@ public class ClientServiceTests
         Assert.NotNull(result);
         Assert.Equal(clientDto, result);
     }
+
     [Fact]
     public void GetClient_WhenClientDoesNotExist_ThrowsClientNotFoundException()
     {
