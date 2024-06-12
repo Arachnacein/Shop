@@ -25,12 +25,12 @@ namespace ClientManager.Infrastructure.Repositories
 
         public Client GetClient(Guid id)
         {
-            return _context.Clients.Single(x => x.Id == id);
+            return _context.Clients.SingleOrDefault(x => x.Id == id);
         }
 
         public Client GetClient(string name)
         {
-            return _context.Clients.Single(x => x.Name == name);
+            return _context.Clients.SingleOrDefault(x => x.Name == name);
         }
 
         public Client AddClient(Client client)
