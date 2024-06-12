@@ -12,7 +12,7 @@
 </MudPaper>
     <MudPaper Class="pa-8 ma-2" Elevation="3">
 
-    <MudTable Items="@clients" Hover="true" Elevation="30" Dense=true Striped=true SortLabel="Sort By">
+    <MudTable Items="@clients" Hover="true" Elevation="30" Dense=true Striped=true SortLabel="Sort By" data-testid="client-table">
         <HeaderContent>
             <MudTh><MudTableSortLabel SortBy="new Func<ClientViewModel, object>(x=>x.Name)">Imię</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<ClientViewModel, object>(x=>x.Surname)">Nazwisko</MudTableSortLabel></MudTh>
