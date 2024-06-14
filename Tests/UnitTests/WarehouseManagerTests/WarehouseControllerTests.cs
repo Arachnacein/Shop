@@ -105,7 +105,7 @@ namespace WarehouseManagerTests
             var result = _controller.Create(dto);
 
             var conflictResult = Assert.IsType<ConflictObjectResult>(result);
-            Assert.IsType<ProductNotFoundException>(conflictResult.Value);
+            Assert.IsType<string>(conflictResult.Value);
         }
 
         [Fact]
@@ -143,7 +143,7 @@ namespace WarehouseManagerTests
             var result = _controller.Update(dto);
 
             var conflictResult = Assert.IsType<ConflictObjectResult>(result);
-            Assert.IsType<Exception>(conflictResult.Value);
+            Assert.IsType<string>(conflictResult.Value);
         }
 
         [Fact]

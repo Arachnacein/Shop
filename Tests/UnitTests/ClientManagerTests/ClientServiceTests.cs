@@ -84,7 +84,11 @@ public class ClientServiceTests
     public void AddNewClient_ValidClient_ReturnsClientDto()
     {
         // Arrange
-        var createClientDto = new CreateClientDto();
+        var createClientDto = new CreateClientDto
+        {
+            Name = "Grażyna", 
+            Surname = "Babacka" 
+        };
         var client = new Client();
         var clientDto = new ClientDto();
         _mockMapper.Setup(mapper => mapper.Map<Client>(createClientDto)).Returns(client);
@@ -99,7 +103,12 @@ public class ClientServiceTests
     public void UpdateClient_WhenClientExists_UpdatesClient()
     {
         // Arrange
-        var updateClientDto = new UpdateClientDto();
+        var updateClientDto = new UpdateClientDto
+        {
+            Id = Guid.Empty, 
+            Name = "Grażyna", 
+            Surname = "Babacka" 
+        };
         var existingClient = new Client();
         _mockClientRepository.Setup(repo => repo.GetClient(updateClientDto.Id)).Returns(existingClient);
         // Act
@@ -111,7 +120,12 @@ public class ClientServiceTests
     public void UpdateClient_WhenClientDoesNotExist_ThrowsClientNotFoundException()
     {
         // Arrange
-        var updateClientDto = new UpdateClientDto();
+        var updateClientDto = new UpdateClientDto
+        {
+            Id = Guid.Empty, 
+            Name = "Grażyna", 
+            Surname = "Babacka" 
+        };
         _mockClientRepository.Setup(repo => repo.GetClient(updateClientDto.Id)).Returns((Client)null);
         // Act & Assert
         var exception = Assert.Throws<ClientNotFoundException>(() => _clientService.UpdateClient(updateClientDto));
