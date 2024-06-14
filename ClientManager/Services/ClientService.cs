@@ -37,20 +37,20 @@ namespace ClientManager.Services
         }
         public ClientDto AddNewClient(CreateClientDto client)
         {
-            if(client.Name == string.Empty || client.Name.Length < 2)
+            if(client.Name == null || client.Name == string.Empty || client.Name.Length < 2)
                 throw new Exception($"Name should be at least 2 signs.");
-            if(client.Surname == string.Empty || client.Surname.Length <4)
+            if(client.Surname == null || client.Surname == string.Empty || client.Surname.Length <4)
                 throw new Exception($"Surname should be at least 4 signs.");
-
+                
             var mappedClient = _mapper.Map<Client>(client);
             _clientRepository.AddClient(mappedClient);
             return _clientMapper.Map(mappedClient);
         }
         public void UpdateClient(UpdateClientDto client)
         {
-            if(client.Name == string.Empty || client.Name.Length < 2)
+            if(client.Name == null || client.Name == string.Empty || client.Name.Length < 2)
                 throw new Exception($"Name should be at least 2 signs.");
-            if(client.Surname == string.Empty || client.Surname.Length <4)
+            if(client.Surname == null || client.Surname == string.Empty || client.Surname.Length <4)
                 throw new Exception($"Surname should be at least 4 signs.");
 
             var existingClient = _clientRepository.GetClient(client.Id);

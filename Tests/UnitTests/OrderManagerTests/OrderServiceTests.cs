@@ -80,7 +80,11 @@ namespace OrderManagerTests
         public void CreateOrder_ValidOrder_ReturnsOrderDto()
         {
             // Arrange
-            var createOrderDto = new CreateOrderDto();
+            var createOrderDto = new CreateOrderDto()
+            {
+                Amount = 2,
+                Price = 1.0m
+            };
             var order = new Order();
             var orderDto = new OrderDto();
             _mockMapper.Setup(mapper => mapper.Map<Order>(createOrderDto)).Returns(order);
@@ -98,7 +102,12 @@ namespace OrderManagerTests
         public void UpdateOrder_WhenOrderExists_UpdatesOrder()
         {
             // Arrange
-            var updateOrderDto = new UpdateOrderDto { Id = 1 };
+            var updateOrderDto = new UpdateOrderDto 
+            { 
+                Id = 1, 
+                Amount = 10,
+                Price = 9.99m 
+            };
             var existingOrder = new Order { Id = 1, CreateDate = DateTime.Now };
             _mockOrderRepository.Setup(repo => repo.GetById(updateOrderDto.Id)).Returns(existingOrder);
             _mockMapper.Setup(mapper => mapper.Map<Order>(updateOrderDto)).Returns(existingOrder);
@@ -114,7 +123,12 @@ namespace OrderManagerTests
         public void UpdateOrder_WhenOrderDoesNotExist_ThrowsOrderNotFoundException()
         {
             // Arrange
-            var updateOrderDto = new UpdateOrderDto { Id = 1 };
+            var updateOrderDto = new UpdateOrderDto 
+            { 
+                Id = 1, 
+                Amount = 10,
+                Price = 9.99m 
+            };
             _mockOrderRepository.Setup(repo => repo.GetById(updateOrderDto.Id)).Returns((Order)null);
 
             // Act & Assert
