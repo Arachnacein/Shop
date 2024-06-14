@@ -10,7 +10,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Net;
 
-namespace ClientManagerTests
+namespace UITests
 {    
     [Parallelizable(ParallelScope.Self)]
     [TestFixture]
@@ -18,6 +18,63 @@ namespace ClientManagerTests
     {
         private readonly string apiBaseUrl = "http://localhost:8010/api/client";
 
+        [Test]
+        public async Task AddClient_WithValidData_ShouldAddClient()
+        {
+            // Arrange
+            var httpClient = new HttpClient();
+            var newClient = new ClientViewModel
+            {
+                Name = "TestClientName",
+                Surname = "TestClientSurname"
+            };
+
+            // Act
+            var response = await httpClient.PostAsJsonAsync(apiBaseUrl, newClient);
+            response.EnsureSuccessStatusCode(); 
+
+            var clients = await httpClient.GetAsync(apiBaseUrl);
+            var clientsList = await clients.Content.ReadFromJsonAsync<List<ClientViewModel>>();
+            var freshClient = clientsList.Last(); 
+
+            // Assert
+            Assert.AreEqual(newClient.Name, freshClient.Name);
+            Assert.AreEqual(newClient.Surname, freshClient.Surname);           
+        }
+        [Test]
+        public async Task AddClient_WithInvalidName_ShouldNotAddClient()
+        {            
+            // Arrange
+            var httpClient = new HttpClient();
+            var newClient = new ClientViewModel
+            {
+                Name = string.Empty,
+                Surname = "CorrectSurname"
+            };
+
+            // Act
+            var response = await httpClient.PostAsJsonAsync(apiBaseUrl, newClient);
+
+            //Assert
+            Assert.AreEqual(HttpStatusCode.Conflict, response.StatusCode);
+        }
+        [Test]
+        public async Task AddClient_WithInvalidSurname_ShouldNotAddClient()
+        {            
+            // Arrange
+            var httpClient = new HttpClient();
+            var newClient = new ClientViewModel
+            {
+                Name = "CorrenctName",
+                Surname = string.Empty
+            };
+
+            // Act
+            var response = await httpClient.PostAsJsonAsync(apiBaseUrl, newClient);
+
+            //Assert
+            Assert.AreEqual(HttpStatusCode.Conflict, response.StatusCode);
+        }
         [Test]
         public async Task GetClientList_WhenCalled_ShouldReturnNonEmptyListOfClients()
         {
@@ -43,12 +100,12 @@ namespace ClientManagerTests
             response.EnsureSuccessStatusCode();
             var clients = await response.Content.ReadFromJsonAsync<List<ClientViewModel>>();
            
-            var clientToUpdate = clients[0]; 
+            var clientToUpdate = clients.Last(); 
             var updatedClient = new ClientViewModel
             {
                 Id = clientToUpdate.Id,
-                Name = "NewName",
-                Surname = "NewSurname"
+                Name = "Jaś",
+                Surname = "Grochowski"
             };
 
             // Act
@@ -72,8 +129,8 @@ namespace ClientManagerTests
             var updatedClient = new ClientViewModel
             {
                 Id = Guid.Empty,
-                Name = "NewName",
-                Surname = "NewSurname"
+                Name = "TestClientName_notExists",
+                Surname = "TestClientSurname_notExists"
             };
 
             // Act
@@ -81,6 +138,42 @@ namespace ClientManagerTests
 
             // Assert
             Assert.AreEqual(HttpStatusCode.NotFound, updateResponse.StatusCode);
+        }
+        [Test]
+        public async Task UpdateClient_WhenInvalidName_ShouldReturnNotFound()
+        {
+            // Arrange
+            var httpClient = new HttpClient();
+            var updatedClient = new ClientViewModel
+            {
+                Id = Guid.Empty,
+                Name = string.Empty,
+                Surname = "CorrectSurname"
+            };
+
+            // Act
+            var updateResponse = await httpClient.PutAsJsonAsync(apiBaseUrl, updatedClient);
+
+            // Assert
+            Assert.AreEqual(HttpStatusCode.Conflict, updateResponse.StatusCode);
+        }
+        [Test]
+        public async Task UpdateClient_WhenInvalidSurname_ShouldReturnNotFound()
+        {
+            // Arrange
+            var httpClient = new HttpClient();
+            var updatedClient = new ClientViewModel
+            {
+                Id = Guid.Empty,
+                Name = "CorrectName",
+                Surname = string.Empty
+            };
+
+            // Act
+            var updateResponse = await httpClient.PutAsJsonAsync(apiBaseUrl, updatedClient);
+
+            // Assert
+            Assert.AreEqual(HttpStatusCode.Conflict, updateResponse.StatusCode);
         }
         [Test]
         public async Task DeleteClient_WhenClientExists_ShouldDeleteClient()
@@ -91,7 +184,7 @@ namespace ClientManagerTests
             var response = await httpClient.GetAsync(apiBaseUrl);
             response.EnsureSuccessStatusCode();
             var clients = await response.Content.ReadFromJsonAsync<List<ClientViewModel>>();
-            var clientToDelete = clients[0]; 
+            var clientToDelete = clients.Last(); 
 
             // Act
             var deleteResponse = await httpClient.DeleteAsync($"{apiBaseUrl}/{clientToDelete.Id}");
@@ -114,28 +207,6 @@ namespace ClientManagerTests
             // Assert
             Assert.AreEqual(HttpStatusCode.BadRequest, deleteResponse.StatusCode);
         }
-        [Test]
-        public async Task AddClient_WithValidData_ShouldAddClient()
-        {
-            // Arrange
-            var httpClient = new HttpClient();
-            var newClient = new ClientViewModel
-            {
-                Name = "NewName",
-                Surname = "NewSurname"
-            };
 
-            // Act
-            var response = await httpClient.PostAsJsonAsync(apiBaseUrl, newClient);
-            response.EnsureSuccessStatusCode(); // Upewnij się, że odpowiedź jest sukcesem
-
-            var clients = await httpClient.GetAsync(apiBaseUrl);
-            var clientsList = await clients.Content.ReadFromJsonAsync<List<ClientViewModel>>();
-            var freshClient = clientsList.Last(); // Pobierz ostatniego dodanego klienta
-
-            // Assert
-            Assert.AreEqual(newClient.Name, freshClient.Name);
-            Assert.AreEqual(newClient.Surname, freshClient.Surname);           
-        }
     }
 }
