@@ -48,7 +48,7 @@ namespace UITests
             var httpClient = new HttpClient();
             var newClient = new ClientViewModel
             {
-                Name = string.Empty,
+                Name = "",
                 Surname = "CorrectSurname"
             };
 
@@ -66,7 +66,7 @@ namespace UITests
             var newClient = new ClientViewModel
             {
                 Name = "CorrenctName",
-                Surname = string.Empty
+                Surname = ""
             };
 
             // Act

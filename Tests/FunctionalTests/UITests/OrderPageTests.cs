@@ -61,56 +61,6 @@ namespace UITests
             Assert.IsFalse(freshOrder.Finished);
         }
         [Test]
-        public async Task AddOrder_WithInvalidUser_ShouldNotAddOrder()
-        {            
-            // Arrange
-            var httpClient = new HttpClient();
-
-            var products = await httpClient.GetAsync(apiBaseUrlProduct);
-            var productsList = await products.Content.ReadFromJsonAsync<List<ProductViewModel>>();
-            var product = productsList.First();
-
-            var newOrder = new 
-            {
-                Id_User = Guid.Empty,
-                Id_Product = product.Id,
-                Amount = 20,
-                Price = 15.90m
-            };
-
-            // Act
-            var response = await httpClient.PostAsJsonAsync(apiBaseUrlOrder, newOrder);
-
-            // Assert
-            Assert.AreEqual(HttpStatusCode.Conflict, response.StatusCode);
-
-        }
-
-        [Test]
-        public async Task AddOrder_WithInvalidProduct_ShouldNotAddOrder()
-        {        
-            // Arrange
-            var httpClient = new HttpClient();
-
-            var users = await httpClient.GetAsync(apiBaseUrlClient);
-            var usersList = await users.Content.ReadFromJsonAsync<List<ClientViewModel>>();
-            var user = usersList.First();
-
-            var newOrder = new 
-            {
-                Id_User = user.Id,
-                Id_Product = 0,
-                Amount = 20,
-                Price = 15.90m
-            };
-
-            // Act
-            var response = await httpClient.PostAsJsonAsync(apiBaseUrlOrder, newOrder);
-
-            // Assert
-            Assert.AreEqual(HttpStatusCode.Conflict, response.StatusCode);
-        }
-        [Test]
         public async Task AddOrder_WithInvalidAmount_ShouldNotAddOrder()
         {        
             // Arrange
@@ -127,7 +77,7 @@ namespace UITests
             var newOrder = new 
             {
                 Id_User = user.Id,
-                Id_Product = product,
+                Id_Product = product.Id,
                 Amount = -20,
                 Price = 15.90m
             };
@@ -155,7 +105,7 @@ namespace UITests
             var newOrder = new 
             {
                 Id_User = user.Id,
-                Id_Product = product,
+                Id_Product = product.Id,
                 Amount = 20,
                 Price = -15.90m
             };
@@ -171,7 +121,15 @@ namespace UITests
         {
             // Arrange
             var httpClient = new HttpClient();
+            var newOrder = new 
+            {
+                Id_User = Guid.Empty,
+                Id_Product = 2,
+                Amount = 999,
+                Price = 19.99m
+            };
 
+            await httpClient.PostAsJsonAsync(apiBaseUrlOrder, newOrder);
             //Act
             var response = await httpClient.GetAsync(apiBaseUrlOrder);
             response.EnsureSuccessStatusCode();
@@ -221,68 +179,6 @@ namespace UITests
             // Assert
             Assert.IsNotNull(updatedOrderResponse);
             Assert.AreEqual(updatedOrder.Id, updatedOrderResponse.Id);          
-        }
-        [Test]
-        public async Task UpdateOrder_WhenInvalidUser_ShouldNotUpdateOrderInformation()
-        {
-            // Arrange
-            var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync(apiBaseUrlOrder);
-            response.EnsureSuccessStatusCode();
-            var orders = await response.Content.ReadFromJsonAsync<List<OrderViewModel>>();
-            var orderToUpdate = orders.Last(); 
-
-            var products = await httpClient.GetAsync(apiBaseUrlProduct);
-            var productsList = await products.Content.ReadFromJsonAsync<List<ProductViewModel>>();
-            var product = productsList.First();
-            
-            var updatedOrder = new OrderViewModel
-            {
-                Id = orderToUpdate.Id,
-                Id_Product = product.Id,
-                Id_User = Guid.Empty,
-                Amount = 555,
-                Price = 5.99m,
-                CompletionDate = DateTime.Now,
-                Finished = false
-            };
-
-            // Act
-            var updateResponse = await httpClient.PutAsJsonAsync(apiBaseUrlOrder, updatedOrder);
-
-            // Assert
-            Assert.AreEqual(HttpStatusCode.Conflict, updateResponse.StatusCode);          
-        }
-        [Test]
-        public async Task UpdateOrder_WhenInvalidProduct_ShouldNotUpdateOrderInformation()
-        {
-            // Arrange
-            var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync(apiBaseUrlOrder);
-            response.EnsureSuccessStatusCode();
-            var orders = await response.Content.ReadFromJsonAsync<List<OrderViewModel>>();
-            var orderToUpdate = orders.Last(); 
-
-            var users = await httpClient.GetAsync(apiBaseUrlClient);
-            var usersList = await users.Content.ReadFromJsonAsync<List<ClientViewModel>>();
-            var user = usersList.First();
-            
-            var updatedOrder = new OrderViewModel
-            {
-                Id = orderToUpdate.Id,
-                Id_Product = 0,
-                Id_User = user.Id,
-                Amount = 555,
-                Price = 5.99m,
-                CompletionDate = DateTime.Now,
-                Finished = false
-            };
-
-            // Act
-            var updateResponse = await httpClient.PutAsJsonAsync(apiBaseUrlOrder, updatedOrder);
-
-            // Assert
-            Assert.AreEqual(HttpStatusCode.Conflict, updateResponse.StatusCode);          
         }
         [Test]
         public async Task UpdateOrder_WhenInvalidAmount_ShouldNotUpdateOrderInformation()

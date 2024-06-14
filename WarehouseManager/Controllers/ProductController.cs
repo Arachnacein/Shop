@@ -77,7 +77,7 @@ namespace WarehouseManager.Controllers
             }
             catch(Exception e)
             {
-                return Conflict(e);
+                return Conflict(e.Message);
             } 
         }
 
@@ -94,7 +94,7 @@ namespace WarehouseManager.Controllers
             }
             catch(Exception e)
             {
-                return Conflict(e);
+                return Conflict(e.Message);
             } 
         }
 

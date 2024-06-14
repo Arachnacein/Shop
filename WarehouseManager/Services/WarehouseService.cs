@@ -37,6 +37,13 @@ namespace WarehouseManager.Services
         }
         public ProductDto AddNewProduct(CreateProductDto dto)
         {
+            if(dto.Name == string.Empty || dto.Name.Length < 2)
+                throw new Exception($"Product name should be at least 2 signs.");
+            if(dto.Price <= 0.00m)
+                throw new Exception($"Product Price should be greater than 0.");
+            if(dto.Amount <= 0)
+                throw new Exception($"Product Amount should be greater than 0.");
+
             Product product = new Product();
             product.Name = dto.Name;
             product.Price = dto.Price;
@@ -49,6 +56,13 @@ namespace WarehouseManager.Services
         }
         public void UpdateProduct(UpdateProductDto dto)
         {
+            if(dto.Name == string.Empty || dto.Name.Length < 2)
+                throw new Exception($"Product name should be at least 2 signs.");
+            if(dto.Price <= 0.00m)
+                throw new Exception($"Product Price should be greater than 0.");
+            if(dto.Amount <= 0)
+                throw new Exception($"Product Amount should be greater than 0.");
+
             var existingProduct = _warehouseRepository.GetProduct(dto.Id);
             if(existingProduct == null)
                 throw new ProductNotFoundException($"Product not found! ID:{dto.Id}");

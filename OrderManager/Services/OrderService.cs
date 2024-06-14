@@ -35,6 +35,11 @@ namespace OrderManager.Services
         }
         public OrderDto CreateOrder(CreateOrderDto dto)
         {
+            if(dto.Amount <= 0)
+                throw new Exception($"Amount should be greater than 0.");
+            if(dto.Price <= 0.0m)
+                throw new Exception($"Price should be greater than 0.");
+
             var mappedOrder = _mapper.Map<Order>(dto);
 
             mappedOrder.CreateDate = DateTime.Now;
@@ -46,6 +51,11 @@ namespace OrderManager.Services
         }
         public void UpdateOrder(UpdateOrderDto dto)
         {
+            if(dto.Amount <= 0)
+                throw new Exception($"Amount should be greater than 0.");
+            if(dto.Price <= 0.0m)
+                throw new Exception($"Price should be greater than 0.");
+
             var existingOrder = _repository.GetById(dto.Id);
             if(existingOrder == null)
                 throw new OrderNotFoundException($"Order not found id:{dto.Id}");
