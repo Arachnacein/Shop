@@ -48,6 +48,7 @@ namespace UITests
 
             // Act
             var response = await httpClient.PostAsJsonAsync(apiBaseUrl, newProduct);
+            
             var getProductsList = await httpClient.GetAsync(apiBaseUrl);
             var freshProducts = await getProductsList.Content.ReadFromJsonAsync<List<ProductViewModel>>();
             var freshProduct = freshProducts.Last();
@@ -183,6 +184,7 @@ namespace UITests
         public async Task UpdateProduct_WhenDataIsValid_ShouldUpdateProductInformation()
         {
             // Arrange
+            Add_Product();
             var httpClient = new HttpClient();
             var response = await httpClient.GetAsync(apiBaseUrl);
             var products = await response.Content.ReadFromJsonAsync<List<ProductViewModel>>();
@@ -192,7 +194,7 @@ namespace UITests
             {
                 Id = productToUpdate.Id,
                 Name = "Lays [salt]",
-                Price = 10.50m,
+                Price = 99.99m,
                 Amount = 50,
                 UnitType = "Kilogram", 
                 ProductType = "Stały" 

@@ -60,7 +60,7 @@ namespace ClientManager.Controllers
             }
             catch(Exception e)
             {
-                return Conflict(e);
+                return Conflict(e.Message);
             }
         }
 
