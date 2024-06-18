@@ -1,7 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @using MudBlazor;
 @inject MudThemeProvider _mudThemeProvider
-<PageTitle>UI</PageTitle>
+<PageTitle>Praca dyplomowa</PageTitle>
 
 
 <MudThemeProvider @ref="@_mudThemeProvider" IsDarkMode="_mudThemeProvider.IsDarkMode"/>
@@ -23,7 +23,7 @@
 
     <main>
         <div class="top-row px-4" style="background: linear-gradient(45deg, #21278c, #b94cda)">
-            <a href="/about" target="_blank" style="font-size: larger;">O pracy</a>
+            <MudNavLink Href="/about" style="font-size: larger; width:15%;">O pracy</MudNavLink>
             <MudToggleIconButton @bind-Toggled="@_mudThemeProvider.IsDarkMode"
              Icon="@Icons.Material.Filled.LightMode" Color="@Color.Error" Title="Off"
              ToggledIcon="@Icons.Material.Filled.DarkMode" ToggledColor="@Color.Success" ToggledTitle="On"/>
