@@ -1,6 +1,6 @@
 ﻿<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">UI</a>
+        <a class="navbar-brand" href="">Strona główna <MudIcon Icon="@Icons.Material.Filled.Home"></MudIcon></a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -10,13 +10,13 @@
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
     <nav class="flex-column">
         <div class="nav-item px-3">
-            <MudNavLink Href="/client">Klienci</MudNavLink>
+            <MudNavLink Href="/client" Icon="@Icons.Material.Filled.People"> Klienci </MudNavLink>
         </div>
         <div class="nav-item px-3">
-            <MudNavLink Href="/warehouse">Magazyn</MudNavLink>
+            <MudNavLink Href="/warehouse" Icon="@Icons.Material.Filled.Warehouse"> Magazyn </MudNavLink>
         </div>
         <div class="nav-item px-3">
-            <MudNavLink Href="/order">Zamówienia</MudNavLink>
+            <MudNavLink Href="/order" Icon="@Icons.Material.Filled.FactCheck"> Zamówienia </MudNavLink>
         </div>
     </nav>
 </div>
