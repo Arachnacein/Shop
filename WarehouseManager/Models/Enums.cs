@@ -11,7 +11,9 @@ namespace WarehouseManager.Models
         [Description("Kilogram")]
         Kg = 2,
         [Description("Metr")]
-        meter = 3
+        meter = 3,
+        [Description("Sztuka")]
+        piece = 4
     }
 
     public enum ProductTypeEnum
