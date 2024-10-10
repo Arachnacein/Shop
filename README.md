@@ -1,9 +1,6 @@
 Master's thesis.
 E-commerce application based on microservices.
 
-
-Conventional commits required!
-That means you use
-> 'chore' prefix, to change project structure, (chore/setup-architecture)
-> 'feature' prefix to add a new feature, (feature/add-controls feature/add-user-table)
-> 'bugfix' prefix to fixbug. (bugfix/fix-wrong-file-reader)s
+It includes warehouse management functionality, customer management functionality, and order management functionality. 
+Additionally, it has a graphical user interface. The gateway connecting the queries is an API gateway. 
+All of the above are separate microservices.
